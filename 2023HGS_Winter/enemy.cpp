@@ -36,6 +36,7 @@
 // 子クラス
 #include "enemy_boss.h"
 #include "enemy_cookie.h"
+#include "enemy_reindeer.h"
 
 //==========================================================================
 // 無名名前空間
@@ -115,6 +116,10 @@ CEnemy *CEnemy::Create(int nIdx, const char *pFileName, D3DXVECTOR3 pos, TYPE ty
 
 		case TYPE_COOKIE:
 			pEnemy = DEBUG_NEW CEnemyCookie;
+			break;
+
+		case TYPE_REINDEER:
+			pEnemy = DEBUG_NEW CEnemyReindeer;
 			break;
 
 		default:
