@@ -15,6 +15,7 @@
 #include "calculation.h"
 #include "game.h"
 #include "gamemanager.h"
+#include "object_circlegauge2D.h"
 
 //==========================================================================
 // 定数定義
@@ -31,10 +32,11 @@ namespace
 	const float DIS_RATIO_Y = 0.3f;			// Yの間隔
 	const int NUM_TIMER = 2;			// 桁数
 	const int MAX_TIME = 60 * 99;		// タイマーの最大数
-	const int START_TIME = 60 * 30;		// タイマーの初期値
+	const int START_TIME = 120;		// タイマーの初期値
 	const float TIME_APPEARANCE = 0.7f;	// 出現時間
 	const float TIME_ADDLITTLE = 2.0f;	// 少し加算時間
 	const float TIME_ADJUSTMENT = 0.5f;	// 調整時間
+	const float SIZE_CIRCLE = 50.0f;	// 円のサイズ
 }
 
 //==========================================================================
@@ -60,6 +62,8 @@ CTimer::CTimer(int nPriority)
 	m_pos = mylib_const::DEFAULT_VECTOR3;	// 位置
 	m_posOrigin = mylib_const::DEFAULT_VECTOR3;	// 元の位置
 	m_bAddTime = false;			// タイマー加算のフラグ
+	m_nProgress = 0;
+	ZeroMemory(&m_apCircle[0], sizeof(m_apCircle));
 }
 
 //==========================================================================
@@ -129,7 +133,6 @@ CTimer *CTimer::Create(D3DXVECTOR3 pos)
 //==========================================================================
 HRESULT CTimer::Init(D3DXVECTOR3 pos)
 {
-
 	// 各種変数初期化
 	m_pos = pos;
 	m_posOrigin = m_pos;	// 元の位置
@@ -137,6 +140,31 @@ HRESULT CTimer::Init(D3DXVECTOR3 pos)
 	m_state = STATE_WAIT;			// 状態
 	m_bAddTime = true;			// タイマー加算のフラグ
 	D3DXCOLOR setcolor = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+
+	for (int i = 0; i < NUM_CIRCLE; i++)
+	{
+		if (m_apCircle[i] == nullptr)
+		{
+			m_apCircle[i] = CObjectCircleGauge2D::Create(16, SIZE_CIRCLE);
+
+			if (m_apCircle[i] != nullptr)
+			{
+				m_apCircle[i]->SetType(CObject::TYPE::TYPE_OBJECT2D);
+
+				D3DXVECTOR3 pos =
+				{
+					170.0f + SIZE_CIRCLE * i * 2,
+					SIZE_CIRCLE,
+					0.0f
+				};
+
+				m_apCircle[i]->SetRate(1.0f);
+				m_apCircle[i]->SetRateDest(1.0f);
+				m_apCircle[i]->SetPosition(pos);
+				m_apCircle[i]->SetVtx();
+			}
+		}
+	}
 
 	return S_OK;
 }
@@ -178,8 +206,25 @@ void CTimer::Update(void)
 		// デバッグ表示
 		CManager::GetInstance()->GetDebugProc()->Print(
 			"------------------[時間：%d分、%d秒、%d]------------------\n", minutes, seconds, milliseconds);
-	}
 
+		if (m_nProgress <= NUM_CIRCLE - 1)
+		{
+			if (m_apCircle[m_nProgress] != nullptr)
+			{
+				float fSize = m_apCircle[m_nProgress]->GetSize();
+
+				fSize -= fDeltaTime / (START_TIME / NUM_CIRCLE) * SIZE_CIRCLE;
+
+				m_apCircle[m_nProgress]->SetSize(fSize);
+				m_apCircle[m_nProgress]->SetVtx();
+
+				if (fSize <= 0.0f)
+				{
+					m_nProgress++;
+				}
+			}
+		}
+	}
 }
 
 //==========================================================================
