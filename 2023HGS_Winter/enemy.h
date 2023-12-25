@@ -32,6 +32,7 @@ public:
 	enum TYPE
 	{
 		TYPE_BOSS = 0,	// ボス
+		TYPE_COOKIE,	// クッキー
 		TYPE_MAX
 	};
 
@@ -78,6 +79,7 @@ public:
 
 	void SetSpawnPosition(D3DXVECTOR3 pos);	// スポーン地点設定
 	D3DXVECTOR3 GetSpawnPosition(void);	// スポーン地点取得
+	void SetTargetPosition(D3DXVECTOR3 pos) { m_TargetPosition = pos; }	// 目標の位置設定
 
 	HRESULT RoadText(const char *pFileName);
 	virtual void Kill(void);	// 削除
@@ -167,6 +169,7 @@ protected:
 	COLORTYPE m_colorType;					// 色ごとの種類
 	CEnemy *m_pParent;		// 親のポインタ
 	D3DXCOLOR m_mMatcol;	// マテリアルの色
+	D3DXVECTOR3 m_TargetPosition;	// 目標の位置
 private:
 
 	typedef enum

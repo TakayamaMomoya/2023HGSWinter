@@ -35,6 +35,7 @@
 
 // 子クラス
 #include "enemy_boss.h"
+#include "enemy_cookie.h"
 
 //==========================================================================
 // 無名名前空間
@@ -63,6 +64,8 @@ CEnemy::CEnemy(int nPriority) : CObjectChara(nPriority)
 	m_state = STATE_NONE;	// 状態
 	m_Oldstate = m_state;	// 前回の状態
 	m_mMatcol = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);	// マテリアルの色
+	m_TargetPosition = mylib_const::DEFAULT_VECTOR3;	// 目標の位置
+
 	m_nCntState = 0;		// 状態遷移カウンター
 	m_nTexIdx = 0;			// テクスチャのインデックス番号
 	m_nNumChild = 0;		// この数
@@ -108,6 +111,10 @@ CEnemy *CEnemy::Create(int nIdx, const char *pFileName, D3DXVECTOR3 pos, TYPE ty
 		{
 		case TYPE_BOSS:
 			pEnemy = DEBUG_NEW CEnemyBoss;
+			break;
+
+		case TYPE_COOKIE:
+			pEnemy = DEBUG_NEW CEnemyCookie;
 			break;
 
 		default:

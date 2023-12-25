@@ -15,7 +15,7 @@ NUM_CHARACTER = 2
 # キャラクターファイル名
 #------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/enemy/motion_enemyboss.txt			# [0]ボス
-MOTION_FILENAME = data/TEXT/character/enemy/motion_enemyboss.txt			# [1]ボス
+MOTION_FILENAME = data/TEXT/character/enemy/motion_enemy_cookie.txt			# [2]クッキー
 
 #===================================================================================================
 # 敵の情報
@@ -35,21 +35,14 @@ PATTERNSET
 END_PATTERNSET
 
 #------------------------------------------------------------------
-# [1] ボス2
+# [1] クッキー単騎
 #------------------------------------------------------------------
 PATTERNSET
 	
 	ENEMYSET
-		TYPE = 0		# キャラの種類
+		TYPE = 1		# キャラの種類
 		INDEX = 0
 		POS = 0.00 0.00 0.00
-		STARTFRAME = 0		# 初期フレーム
-	END_ENEMYSET
-	
-	ENEMYSET
-		TYPE = 0		# キャラの種類
-		INDEX = 1
-		POS = 2000.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 	
