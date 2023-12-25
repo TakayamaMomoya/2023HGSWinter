@@ -90,6 +90,7 @@ HRESULT CFade::Init(void)
 	m_ModeNext = CScene::MODE_TITLE;	// 次のモード
 	m_ModeNext = CScene::MODE_GAME;	// 次のモード
 	m_ModeNext = CScene::MODE_TUTORIAL;	// 次のモード
+	m_ModeNext = CScene::MODE_TITLE;	// 次のモード
 #else
 	m_ModeNext = CScene::MODE_TITLE;	// 次のモード
 #endif
