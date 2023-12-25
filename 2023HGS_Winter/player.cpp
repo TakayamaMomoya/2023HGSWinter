@@ -179,6 +179,8 @@ HRESULT CPlayer::Init(void)
 	// ポーズのリセット
 	m_pMotion->ResetPose(MOTION_DEF);
 
+	m_pMotion->Set(MOTION_PICKUP);
+
 	return S_OK;
 }
 
