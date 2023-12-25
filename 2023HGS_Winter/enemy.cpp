@@ -37,6 +37,7 @@
 #include "enemy_boss.h"
 #include "enemy_cookie.h"
 #include "enemy_reindeer.h"
+#include "enemy_orafu.h"
 
 //==========================================================================
 // –³–¼–¼‘O‹óŠÔ
@@ -120,6 +121,10 @@ CEnemy *CEnemy::Create(int nIdx, const char *pFileName, D3DXVECTOR3 pos, TYPE ty
 
 		case TYPE_REINDEER:
 			pEnemy = DEBUG_NEW CEnemyReindeer;
+			break;
+
+		case TYPE_ORAFU:
+			pEnemy = DEBUG_NEW CEnemyOrafu;
 			break;
 
 		default:

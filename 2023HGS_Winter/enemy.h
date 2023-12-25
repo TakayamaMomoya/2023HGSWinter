@@ -34,6 +34,7 @@ public:
 		TYPE_BOSS = 0,	// ボス
 		TYPE_COOKIE,	// クッキー
 		TYPE_REINDEER,	// トナカイ
+		TYPE_ORAFU,		// オラフ
 		TYPE_MAX
 	};
 
