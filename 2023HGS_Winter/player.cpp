@@ -37,7 +37,8 @@
 #include "collisionobject.h"
 #include "limitereamanager.h"
 #include "beam.h"
-
+#include "meshsphere.h"
+#include "universal.h"
 
 //==========================================================================
 // 定数定義
@@ -82,6 +83,10 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_sMotionFrag.bMove = false;		// モーションのフラグ
 
 	// プライベート変数
+	m_pSnowBallL = nullptr;							// 左の雪玉
+	m_pSnowBallR = nullptr;							// 右の雪玉
+	m_pMtxSnowBallL = nullptr;						// 左の雪玉持つ用のポインタ
+	m_pMtxSnowBallR = nullptr;						// 右の雪玉持つ用のポインタ
 	m_Oldstate = STATE_NONE;						// 前回の状態
 	m_mMatcol = mylib_const::DEFAULT_COLOR;			// マテリアルの色
 	m_posKnokBack = mylib_const::DEFAULT_VECTOR3;	// ノックバックの位置
@@ -188,6 +193,20 @@ void CPlayer::Uninit(void)
 	{
 		//m_pShadow->Uninit();
 		m_pShadow = NULL;
+	}
+
+	// 右の雪玉を消す
+	if (m_pSnowBallR != nullptr)
+	{
+		m_pSnowBallR->Uninit();
+		m_pSnowBallR = nullptr;
+	}
+
+	// 左の雪玉を消す
+	if (m_pSnowBallL != nullptr)
+	{
+		m_pSnowBallL->Uninit();
+		m_pSnowBallL = nullptr;
 	}
 
 	// 終了処理
@@ -324,7 +343,17 @@ void CPlayer::Update(void)
 				break;
 			}
 		}
+
+		// 手のマトリックス取得
+		aInfo = m_pMotion->GetInfo(MOTION_ATK_L);
+		m_pMtxSnowBallL = GetModel()[aInfo.AttackInfo[0]->nCollisionNum]->GetPtrWorldMtx();
+
+		aInfo = m_pMotion->GetInfo(MOTION_ATK_R);
+		m_pMtxSnowBallR = GetModel()[aInfo.AttackInfo[0]->nCollisionNum]->GetPtrWorldMtx();
 	}
+
+	// 雪玉の追従
+	FollowSnowBall();
 
 #if 0
 	// デバッグ表示
@@ -633,6 +662,70 @@ void CPlayer::Controll(void)
 }
 
 //==========================================================================
+// 雪玉の生成
+//==========================================================================
+void CPlayer::CreateBall(void)
+{
+	// トランスフォームの設定
+	D3DXVECTOR3 pos = GetPosition();
+
+	if (m_pSnowBallR == nullptr)
+	{// 右の雪玉生成
+		m_pSnowBallR = CMeshSphere::Create(pos, 20.0f, 0);
+
+		if (m_pSnowBallR != nullptr)
+		{
+			m_pSnowBallR->SetSizeDest(20.0f);
+		}
+	}
+
+	if (m_pSnowBallL == nullptr)
+	{// 左の雪玉生成
+		m_pSnowBallL = CMeshSphere::Create(pos, 20.0f, 0);
+
+		if (m_pSnowBallL != nullptr)
+		{
+			m_pSnowBallL->SetSizeDest(20.0f);
+		}
+	}
+}
+
+//==========================================================================
+// 雪玉の追従
+//==========================================================================
+void CPlayer::FollowSnowBall(void)
+{
+	if (m_pSnowBallR != nullptr && m_pMtxSnowBallR != nullptr)
+	{
+		D3DXVECTOR3 pos = GetPosition();
+		D3DXVECTOR3 move = GetMove();
+
+		D3DXMATRIX mtxHand;
+
+		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallR, D3DXVECTOR3(40.0f, 0.0f, 20.0f));
+
+		pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
+		pos += move;
+
+		m_pSnowBallR->SetPosition(pos);
+	}
+	if (m_pSnowBallL != nullptr && m_pMtxSnowBallL != nullptr)
+	{
+		D3DXVECTOR3 pos = GetPosition();
+		D3DXVECTOR3 move = GetMove();
+
+		D3DXMATRIX mtxHand;
+
+		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallL, D3DXVECTOR3(-40.0f, 0.0f, 20.0f));
+
+		pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
+		pos += move;
+
+		m_pSnowBallL->SetPosition(pos);
+	}
+}
+
+//==========================================================================
 // モーションの設定
 //==========================================================================
 void CPlayer::MotionSet(void)
@@ -744,9 +837,19 @@ void CPlayer::Atack(void)
 
 				// 雪玉を投げる
 				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 10.0f);
+
+				if (nType == MOTION_ATK_L)
+				{// 左手の場合
+					m_pMtxSnowBallL = GetModel()[aInfo.AttackInfo[nCntAttack]->nCollisionNum]->GetPtrWorldMtx();
+				}
+				else
+				{// 右手の場合
+					m_pMtxSnowBallR = GetModel()[aInfo.AttackInfo[nCntAttack]->nCollisionNum]->GetPtrWorldMtx();
+				}
 			}
 				break;
 			case MOTION_PICKUP:	// 雪玉を拾う
+				CreateBall();
 
 				break;
 			default:
@@ -828,7 +931,6 @@ void CPlayer::Atack(void)
 //==========================================================================
 bool CPlayer::Collision(D3DXVECTOR3 &pos, D3DXVECTOR3 &move)
 {
-
 	// 向き取得
 	D3DXVECTOR3 rot = GetRotation();
 

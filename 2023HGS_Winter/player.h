@@ -18,6 +18,7 @@
 class CShadow;
 class CTargetPoint;
 class CHP_GaugePlayer;
+class CMeshSphere;
 
 //==========================================================================
 // クラス定義
@@ -107,9 +108,15 @@ private:
 	void FadeOut(void);		// フェードアウト
 	void Invincible(void);	// 無敵
 	virtual void Controll(void);	// 操作
+	void CreateBall(void);	// 雪玉の生成
+	void FollowSnowBall(void);	// 雪玉の追従
 
 	void ChangeMotion(const char* pMotionFile);	// モーションファイル変更
 
+	CMeshSphere *m_pSnowBallL;	// 左手の雪玉
+	CMeshSphere *m_pSnowBallR;	// 右手の雪玉
+	D3DXMATRIX *m_pMtxSnowBallL;	// 左手の雪玉持つ用のマトリックス
+	D3DXMATRIX *m_pMtxSnowBallR;	// 左手の雪玉持つ用のマトリックス
 	STATE m_Oldstate;			// 前回の状態
 	D3DXCOLOR m_mMatcol;		// マテリアルの色
 	D3DXVECTOR3 m_posKnokBack;	// ノックバックの位置
