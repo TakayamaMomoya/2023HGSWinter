@@ -132,7 +132,6 @@ HRESULT CGame::Init(void)
 	//**********************************
 	m_pBulletManager = CBulletManager::Create();
 
-
 	// ステージ
 	m_pStage = CStage::Create("data\\TEXT\\stage\\info.txt");
 

@@ -352,7 +352,6 @@ void CBullet::CollisionPlayer(void)
 			break;
 		}
 	}
-
 }
 
 //==========================================================================
@@ -392,6 +391,9 @@ void CBullet::CollisionEnemy(void)
 		if (SphereRange(pos, EnemyPosition, fRadius, fEnemyRadius))
 		{// “–‚½‚Á‚Ä‚¢‚½‚ç
 			bHit = true;
+
+			ppEnemy[nCntEnemy]->Hit(10.0f);
+
 			break;
 		}
 	}
