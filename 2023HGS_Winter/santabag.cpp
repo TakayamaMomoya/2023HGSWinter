@@ -214,7 +214,14 @@ void CSantaBag::Hit(void)
 void CSantaBag::Draw(void)
 {
 	// •`‰æ
-	CObjectX::Draw(m_MatCol);
+	if (m_state == STATE_NONE)
+	{
+		CObjectX::Draw();
+	}
+	else
+	{
+		CObjectX::Draw(m_MatCol);
+	}
 }
 
 //==========================================================================
