@@ -12,6 +12,7 @@
 #include "debugproc.h"
 #include "sound.h"
 #include "camera.h"
+#include "tutorial_screen.h"
 
 //==========================================================================
 // 静的メンバ変数宣言
@@ -47,6 +48,8 @@ HRESULT CTutorial::Init(void)
 	// BGM再生
 	CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_BGM_GAME);
 
+	CTutorialScreen::Create();
+
 	// 成功
 	return S_OK;
 }
@@ -71,8 +74,12 @@ void CTutorial::Update(void)
 	// ゲームパッド情報取得
 	CInputGamepad *pInputGamepad = CManager::GetInstance()->GetInputGamepad();
 
-	if (/*m_pStep->IsEndAll() &&*/
-		(pInputKeyboard->GetTrigger(DIK_BACKSPACE) || pInputGamepad->GetTrigger(CInputGamepad::BUTTON_START, 0) == true))
+	if (CManager::GetInstance()->GetFade()->GetState() != CFade::STATE_NONE)
+	{// フェード中は抜ける
+		return;
+	}
+
+	if (pInputKeyboard->GetTrigger(DIK_RETURN) || pInputGamepad->GetTrigger(CInputGamepad::BUTTON_A, 0) == true)
 	{
 		// モード設定
 		CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_GAME);
