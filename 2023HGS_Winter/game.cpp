@@ -24,6 +24,7 @@
 #include "edit_enemybase.h"
 #include "bulletmanager.h"
 #include "stage.h"
+#include "santabag.h"
 
 #include "enemymanager.h"
 #include "player.h"
@@ -153,6 +154,9 @@ HRESULT CGame::Init(void)
 
 	// タイマー
 	m_pTimer = CTimer::Create(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
+
+	// サンタの袋生成
+	CSantaBag::Create(D3DXVECTOR3(200.0f, 0.0f, 200.0f));
 
 	// 成功
 	return S_OK;
