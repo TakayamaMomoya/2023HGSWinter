@@ -98,7 +98,7 @@ PATTERNSET
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = -100.00 0.00 0.00
+		POS = -75.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
@@ -112,7 +112,7 @@ PATTERNSET
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = 100.00 0.00 0.00
+		POS = 75.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 END_PATTERNSET
@@ -143,14 +143,14 @@ PATTERNSET
 	ENEMYSET
 		TYPE = 3		# キャラの種類
 		INDEX = 0
-		POS = -75.00 0.00 0.00
+		POS = -50.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
 	ENEMYSET
 		TYPE = 3		# キャラの種類
 		INDEX = 0
-		POS = 75.00 0.00 0.00
+		POS = 50.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 END_PATTERNSET
@@ -162,14 +162,14 @@ PATTERNSET
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = -100.00 0.00 0.00
+		POS = -75.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = 100.00 0.00 0.00
+		POS = 75.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
@@ -188,14 +188,14 @@ PATTERNSET
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = -150.00 0.00 0.00
+		POS = -100.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = 150.00 0.00 0.00
+		POS = 100.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
@@ -221,7 +221,7 @@ PATTERNSET
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = -100.00 0.00 0.00
+		POS = -75.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
@@ -235,7 +235,7 @@ PATTERNSET
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = 100.00 0.00 0.00
+		POS = 75.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 END_PATTERNSET
@@ -297,23 +297,23 @@ END_PATTERNSET
 #------------------------------------------------------------------
 PATTERNSET
 	ENEMYSET
-		TYPE = 1		# キャラの種類
+		TYPE = 3		# キャラの種類
 		INDEX = 0
 		POS = 0.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
 	ENEMYSET
-		TYPE = 3		# キャラの種類
+		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = 0.00 0.00 -100.00
+		POS = 0.00 0.00 -50.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
-		POS = 0.00 0.00 -200.00
+		POS = 0.00 0.00 -150.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
 END_PATTERNSET

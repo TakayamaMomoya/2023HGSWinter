@@ -32,12 +32,16 @@ namespace
 	const float DIS_RATIO_Y = 0.3f;			// Yの間隔
 	const int NUM_TIMER = 2;			// 桁数
 	const int MAX_TIME = 60 * 99;		// タイマーの最大数
-	const int START_TIME = 120;		// タイマーの初期値
 	const float TIME_APPEARANCE = 0.7f;	// 出現時間
 	const float TIME_ADDLITTLE = 2.0f;	// 少し加算時間
 	const float TIME_ADJUSTMENT = 0.5f;	// 調整時間
 	const float SIZE_CIRCLE = 50.0f;	// 円のサイズ
 }
+
+//==========================================================================
+// 静的メンバ変数宣言
+//==========================================================================
+CTimer *CTimer::m_pTimer = nullptr;	// 自身のポインタ
 
 //==========================================================================
 // 関数リスト
@@ -106,23 +110,20 @@ CTimer *CTimer::Create(void)
 //==========================================================================
 CTimer *CTimer::Create(D3DXVECTOR3 pos)
 {
-	// 生成用のオブジェクト
-	CTimer *pScore = NULL;
-
-	if (pScore == NULL)
+	if (m_pTimer == NULL)
 	{// NULLだったら
 
 		// メモリの確保
-		pScore = DEBUG_NEW CTimer;
+		m_pTimer = DEBUG_NEW CTimer;
 
-		if (pScore != NULL)
+		if (m_pTimer != NULL)
 		{// メモリの確保が出来ていたら
 
 			// 初期化処理
-			pScore->Init(pos);
+			m_pTimer->Init(pos);
 		}
 
-		return pScore;
+		return m_pTimer;
 	}
 
 	return NULL;
@@ -174,7 +175,7 @@ HRESULT CTimer::Init(D3DXVECTOR3 pos)
 //==========================================================================
 void CTimer::Uninit(void)
 {
-
+	m_pTimer = nullptr;
 }
 
 //==========================================================================

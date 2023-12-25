@@ -23,6 +23,7 @@ class CObjectCircleGauge2D;
 namespace
 {
 	const int NUM_CIRCLE = 10;	// 円の数
+	const float START_TIME = 120;	// 初期時間
 }
 
 //==========================================================================
@@ -47,11 +48,13 @@ public:
 
 	static CTimer *Create(void);
 	static CTimer *Create(D3DXVECTOR3 pos);
+	static CTimer *GetInstance(void) { return m_pTimer; }
 
 	HRESULT Init(D3DXVECTOR3 pos);
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
+	float GetTime(void) { return m_fTime; }
 
 	CTimer::eState GetState(void) { return m_state; }
 	void SetState(eState state) { m_state = state; }
@@ -77,6 +80,7 @@ private:
 	bool m_bAddTime;	// タイマー加算のフラグ
 	int m_nProgress;	// 進行状況
 	CObjectCircleGauge2D *m_apCircle[NUM_CIRCLE];	// 数字がわりの円
+	static CTimer *m_pTimer;	// 自身のポインタ
 };
 
 
