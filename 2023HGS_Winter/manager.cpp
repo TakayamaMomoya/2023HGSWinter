@@ -430,7 +430,7 @@ void CManager::SetMode(CScene::MODE mode)
 	{
 		if (m_pPause->IsPause() == true)
 		{// ポーズ中だったら
-			m_pPause->SetPause();
+			//m_pPause->SetPause();
 		}
 	}
 
@@ -704,15 +704,15 @@ void CManager::Update(void)
 	// マウスの更新処理
 	m_pInputMouse->Update();
 
-	if ((pInputKeyboard->GetTrigger(DIK_P) == true || m_pInputGamepad->GetTrigger(CInputGamepad::BUTTON_START, 0) == true) &&
-		m_pFade->GetState() == CFade::STATE_NONE &&
-		GetMode() == CScene::MODE_GAME)
-	{// フェード中じゃないとき
+	//if ((pInputKeyboard->GetTrigger(DIK_P) == true || m_pInputGamepad->GetTrigger(CInputGamepad::BUTTON_START, 0) == true) &&
+	//	m_pFade->GetState() == CFade::STATE_NONE &&
+	//	GetMode() == CScene::MODE_GAME)
+	//{// フェード中じゃないとき
 
-		// サウンド再生
-		GetSound()->PlaySound(CSound::LABEL_SE_TUTORIALWINDOW);
-		m_pPause->SetPause();
-	}
+	//	// サウンド再生
+	//	GetSound()->PlaySound(CSound::LABEL_SE_TUTORIALWINDOW);
+	//	m_pPause->SetPause();
+	//}
 
 	// ポーズの更新処理
 	if (m_pPause->IsPause() == true)
