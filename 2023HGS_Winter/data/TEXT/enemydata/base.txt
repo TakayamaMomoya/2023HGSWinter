@@ -4,10 +4,33 @@
 #==============================================================================
 #--------------------------------[Stage0]-----------------------------
 STAGESET
+	BASESET
+		PATTERN = 1
+		POS = -797.81 100.00 474.36
+		RUSH = 0
+	END_BASESET
 
 	BASESET
 		PATTERN = 1
-		POS = 300.00 0.00 0.00
+		POS = -1010.11 100.00 -883.47
+		RUSH = 0
+	END_BASESET
+
+	BASESET
+		PATTERN = 8
+		POS = 1202.71 100.00 -1057.33
+		RUSH = 0
+	END_BASESET
+
+	BASESET
+		PATTERN = 10
+		POS = 1365.75 100.00 560.59
+		RUSH = 0
+	END_BASESET
+
+	BASESET
+		PATTERN = 9
+		POS = 556.19 100.00 -1649.46
 		RUSH = 0
 	END_BASESET
 
