@@ -74,7 +74,8 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_nCntWalk = 0;						// 歩行カウンター
 	m_state = STATE_NONE;				// 状態
 	m_pMotion = NULL;					// モーションの情報
-	m_sMotionFrag.bATK = false;			// モーションのフラグ
+	m_sMotionFrag.bATKR = false;			// モーションのフラグ
+	m_sMotionFrag.bATKL = false;			// モーションのフラグ
 	m_sMotionFrag.bJump = false;		// モーションのフラグ
 	m_sMotionFrag.bKnockBack = false;	// モーションのフラグ
 	m_sMotionFrag.bDead = false;		// モーションのフラグ
@@ -615,13 +616,18 @@ void CPlayer::Controll(void)
 		m_state != STATE_FADEOUT)
 	{// 行動できるとき
 
-		if (m_sMotionFrag.bATK == false && 
-			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_A, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
-		{// 攻撃
-
+		if (m_sMotionFrag.bATKL == false && 
+			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_LB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
+		{// 左攻撃
 			// 攻撃判定ON
-			m_sMotionFrag.bJump = false;
-			m_sMotionFrag.bATK = true;
+			m_sMotionFrag.bATKL = true;
+		}
+
+		if (m_sMotionFrag.bATKR == false &&
+			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_RB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
+		{// 右攻撃
+		 // 攻撃判定ON
+			m_sMotionFrag.bATKR = true;
 		}
 	}
 }
@@ -643,7 +649,7 @@ void CPlayer::MotionSet(void)
 		int nType = m_pMotion->GetType();
 		int nOldType = m_pMotion->GetOldType();
 
-		if (m_sMotionFrag.bMove == true && m_sMotionFrag.bATK == false && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false && m_bJump == false)
+		if (m_sMotionFrag.bMove == true && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false && m_bJump == false)
 		{// 移動していたら
 
 			m_sMotionFrag.bMove = false;	// 移動判定OFF
@@ -651,39 +657,19 @@ void CPlayer::MotionSet(void)
 			// 移動モーション
 			m_pMotion->Set(MOTION_WALK);
 		}
-		else if (m_sMotionFrag.bJump == true && m_sMotionFrag.bATK == false && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false)
-		{// ジャンプ中
+		else if (m_sMotionFrag.bATKR == true)
+		{// 右攻撃
 
-			// ジャンプのフラグOFF
-			m_sMotionFrag.bJump = false;
+			m_sMotionFrag.bATKR = false;		// 攻撃判定OFF
 
-			// ジャンプモーション
-			m_pMotion->Set(MOTION_JUMP);
+			m_pMotion->Set(MOTION_ATK_R, true);
 		}
-		else if (m_bJump == true && m_sMotionFrag.bJump == false && m_sMotionFrag.bATK == false && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false)
-		{// ジャンプ中&&ジャンプモーションが終わってる時
+		else if (m_sMotionFrag.bATKL == true)
+		{// 左攻撃
 
-			// 落下モーション
-			m_pMotion->Set(MOTION_FALL);
-		}
-		else if (m_sMotionFrag.bKnockBack == true)
-		{// やられ中だったら
+			m_sMotionFrag.bATKL = false;		// 攻撃判定OFF
 
-			// やられモーション
-			m_pMotion->Set(MOTION_KNOCKBACK);
-		}
-		else if (m_sMotionFrag.bDead == true)
-		{// 死亡中だったら
-
-			// やられモーション
-			m_pMotion->Set(MOTION_DEAD);
-		}
-		else if (m_sMotionFrag.bATK == true)
-		{// 攻撃していたら
-
-			m_sMotionFrag.bATK = false;		// 攻撃判定OFF
-
-			m_pMotion->Set(MOTION_ATK, true);
+			m_pMotion->Set(MOTION_ATK_L, true);
 		}
 		else
 		{
@@ -730,17 +716,18 @@ void CPlayer::Atack(void)
 
 		if (m_pMotion->IsImpactFrame(*aInfo.AttackInfo[nCntAttack]))
 		{// 衝撃のカウントと同じとき
-
-			// 種類別
-			switch (m_pMotion->GetType())
+			// トランスフォームの取得
+			D3DXVECTOR3 pos = m_pMotion->GetAttackPosition(GetModel(), *aInfo.AttackInfo[nCntAttack]);
+			D3DXVECTOR3 rot = GetRotation();
+			D3DXVECTOR3 move = 
 			{
-			case MOTION_ATK:
-			case MOTION_ATK2:
+				sinf(rot.y) * 15.0f,
+				0.0f,
+				cosf(rot.y) * 15.0f,
+			};
 
-				// スイング音再生
-				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_SWING);
-				break;
-			}
+			// 雪玉を投げる
+			CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 20.0f);
 		}
 
 		// モーションカウンター取得
@@ -753,13 +740,13 @@ void CPlayer::Atack(void)
 
 			CEffect3D *pEffect = NULL;
 
-			switch (m_pMotion->GetType())
-			{
-			case MOTION_ATK:
-			case MOTION_ATK2:
-				
-				break;
-			}
+			//switch (m_pMotion->GetType())
+			//{
+			//case MOTION_ATK:
+			//case MOTION_ATK2:
+			//	
+			//	break;
+			//}
 
 #if _DEBUG
 			CEffect3D::Create(weponpos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), aInfo.AttackInfo[nCntAttack]->fRangeSize, 10, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
@@ -1004,7 +991,7 @@ bool CPlayer::Hit(const int nValue)
 			m_sMotionFrag.bKnockBack = true;
 
 			// やられモーション
-			m_pMotion->Set(MOTION_KNOCKBACK);
+			//m_pMotion->Set(MOTION_KNOCKBACK);
 
 			// ノックバックの位置更新
 			D3DXVECTOR3 pos = GetPosition();
@@ -1056,7 +1043,7 @@ bool CPlayer::Hit(const int nValue)
 		m_sMotionFrag.bKnockBack = true;
 
 		// やられモーション
-		m_pMotion->Set(MOTION_KNOCKBACK);
+		///m_pMotion->Set(MOTION_KNOCKBACK);
 
 		// 衝撃波生成
 		CImpactWave::Create
@@ -1305,7 +1292,7 @@ void CPlayer::Dead(void)
 		//m_pMotion->ToggleFinish(true);
 
 		// ぶっ倒れモーション
-		m_pMotion->Set(MOTION_DEAD);
+		//m_pMotion->Set(MOTION_DEAD);
 
 		// Xファイルとの判定
 		CStage *pStage = CGame::GetStage();

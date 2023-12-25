@@ -31,13 +31,9 @@ protected:
 	{
 		MOTION_DEF = 0,			// ニュートラルモーション
 		MOTION_WALK,			// 移動モーション
-		MOTION_ATK,				// 攻撃
-		MOTION_ATK2,			// 攻撃(派生)
-		MOTION_KNOCKBACK,		// やられモーション
-		MOTION_DEAD,			// 死亡モーション
-		MOTION_JUMP,			// ジャンプ
-		MOTION_FALL,			// 落下中
-		MOTION_EVOLUTION,		// 進化中
+		MOTION_ATK_R,			// 攻撃右
+		MOTION_ATK_L,			// 攻撃左
+		MOTION_PICKUP,			// 拾いモーション
 		MOTION_MAX
 	};
 
@@ -45,7 +41,8 @@ protected:
 	struct SMotionFrag
 	{
 		bool bJump;			// ジャンプ中かどうか
-		bool bATK;			// 攻撃中かどうか
+		bool bATKR;			// 右攻撃中かどうか
+		bool bATKL;			// 左攻撃中かどうか
 		bool bKnockBack;	// ノックバック中かどうか
 		bool bDead;			// 死亡中かどうか
 		bool bMove;			// 移動中かどうか
