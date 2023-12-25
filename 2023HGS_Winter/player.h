@@ -108,6 +108,7 @@ private:
 	void FadeOut(void);		// フェードアウト
 	void Invincible(void);	// 無敵
 	virtual void Controll(void);	// 操作
+	void Aim(void);	// エイムの処理
 	void CreateBall(void);	// 雪玉の生成
 	void FollowSnowBall(void);	// 雪玉の追従
 

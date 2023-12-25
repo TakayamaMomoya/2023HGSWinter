@@ -635,10 +635,13 @@ void CPlayer::Controll(void)
 	SetMove(move);
 
 	// 向き設定
-	SetRotation(rot);
+	//SetRotation(rot);
 
 	// 目標の向き設定
-	SetRotDest(fRotDest);
+	//SetRotDest(fRotDest);
+
+	// エイムの処理
+	Aim();
 
 	if (CGame::GetGameManager()->IsControll() &&
 		m_state != STATE_DEAD &&
@@ -658,6 +661,72 @@ void CPlayer::Controll(void)
 		 // 攻撃判定ON
 			m_sMotionFrag.bATKR = true;
 		}
+	}
+}
+
+//==========================================================================
+// エイムの処理
+//==========================================================================
+void CPlayer::Aim(void)
+{
+	// キーボード情報取得
+	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+
+	// ゲームパッド情報取得
+	CInputGamepad *pInputGamepad = CManager::GetInstance()->GetInputGamepad();
+
+	// スティックの角度取得
+	D3DXVECTOR3 vecStickR = pInputGamepad->GetStickMoveR(m_nMyPlayerIdx);
+	D3DXVECTOR3 vecStickL = pInputGamepad->GetStickMoveL(m_nMyPlayerIdx);
+
+	float fLength = D3DXVec3Length(&vecStickR);
+	float fLengthL = D3DXVec3Length(&vecStickL);
+
+	if (fLength >= 0.4f)
+	{// 右スティックで狙ってる判定
+		float fRotDest = atan2f(vecStickR.x, vecStickR.y) + D3DX_PI;
+
+		SetRotDest(fRotDest);
+
+		D3DXVECTOR3 rot = GetRotation();
+
+		// 現在と目標の差分を求める
+		float fRotDiff = fRotDest - rot.y;
+
+		// 角度の正規化
+		RotNormalize(fRotDiff);
+
+		// 角度の補正をする
+		rot.y += fRotDiff * 0.15f;
+
+		// 角度の正規化
+		RotNormalize(rot.y);
+
+		// 向き設定
+		SetRotation(rot);
+	}
+	else if (fLengthL >= 0.4f)
+	{
+		float fRotDest = atan2f(vecStickL.x, vecStickL.y) + D3DX_PI;
+
+		SetRotDest(fRotDest);
+
+		D3DXVECTOR3 rot = GetRotation();
+
+		// 現在と目標の差分を求める
+		float fRotDiff = fRotDest - rot.y;
+
+		// 角度の正規化
+		RotNormalize(fRotDiff);
+
+		// 角度の補正をする
+		rot.y += fRotDiff * 0.15f;
+
+		// 角度の正規化
+		RotNormalize(rot.y);
+
+		// 向き設定
+		SetRotation(rot);
 	}
 }
 
@@ -840,11 +909,19 @@ void CPlayer::Atack(void)
 
 				if (nType == MOTION_ATK_L)
 				{// 左手の場合
-					m_pMtxSnowBallL = GetModel()[aInfo.AttackInfo[nCntAttack]->nCollisionNum]->GetPtrWorldMtx();
+					if (m_pSnowBallL != nullptr)
+					{
+						m_pSnowBallL->Uninit();
+						m_pSnowBallL = nullptr;
+					}
 				}
 				else
 				{// 右手の場合
-					m_pMtxSnowBallR = GetModel()[aInfo.AttackInfo[nCntAttack]->nCollisionNum]->GetPtrWorldMtx();
+					if (m_pSnowBallR != nullptr)
+					{
+						m_pSnowBallR->Uninit();
+						m_pSnowBallR = nullptr;
+					}
 				}
 			}
 				break;

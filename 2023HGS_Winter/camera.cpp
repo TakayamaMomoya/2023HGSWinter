@@ -250,7 +250,7 @@ void CCamera::MoveCameraStick(int nIdx)
 	// ゲームパッド情報取得
 	CInputGamepad *pInputGamepad = CManager::GetInstance()->GetInputGamepad();
 
-#if 1
+#if 0
 	m_rot.y += pInputGamepad->GetStickMoveR(nIdx).x * ROT_MOVE_STICK;
 	//m_rot.z += pInputGamepad->GetStickMoveR(nIdx).y * ROT_MOVE_STICK;
 #endif
