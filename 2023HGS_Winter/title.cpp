@@ -105,14 +105,7 @@ void CTitle::Update(void)
 	if (pInputKeyboard->GetTrigger(DIK_RETURN) || pInputGamepad->GetTrigger(CInputGamepad::BUTTON_A, 0) == true)
 	{
 		// モード設定
-		CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_GAME);
-	}
-
-	if (m_nCntSwitch >= 60 * 40)
-	{// 自動遷移
-
-		// モード設定
-		CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_RANKING);
+		CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_TUTORIAL);
 	}
 }
 

@@ -113,16 +113,7 @@ void CResult::Uninit(void)
 //==========================================================================
 void CResult::Update(void)
 {
-	if (m_clear)
-	{
-		CManager::GetInstance()->GetDebugProc()->Print(
-			"現在のモード：【 リザルト : 成功 】\n\n");
-	}
-	else
-	{
-		CManager::GetInstance()->GetDebugProc()->Print(
-			"現在のモード：【 リザルト : 失敗 】\n\n");
-	}
+	
 
 	// キーボード情報取得
 	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
@@ -136,7 +127,7 @@ void CResult::Update(void)
 		if (m_bAllArrival == true)
 		{
 			// モード設定
-			CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_RANKING);
+			CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_TITLE);
 		}
 
 		if (CManager::GetInstance()->GetFade()->GetState() == CFade::STATE_NONE)
