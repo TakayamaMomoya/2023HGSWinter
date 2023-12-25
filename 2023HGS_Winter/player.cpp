@@ -57,7 +57,7 @@ namespace
 	const int INTERVAL_ATK = 15;		// 攻撃の猶予
 	const int MAX_BUFFSTATUS = 100;		// ステータスのバフ最大値
 	const float MAX_BALL_SIZE = 40.0f;	// 雪玉の最大サイズ
-	const float SPEED_GRAW_BALL = 0.7f;	// 雪玉の成長速度
+	const float SPEED_GRAW_BALL = 1.1f;	// 雪玉の成長速度
 	const float LINE_ICE = 30.0f;	// 氷球になるライン
 	const float RADIUS_STAGE = 1000.0f;	// ステージの半径
 }
@@ -178,8 +178,6 @@ HRESULT CPlayer::Init(void)
 
 	// ポーズのリセット
 	m_pMotion->ResetPose(MOTION_DEF);
-
-	m_pMotion->Set(MOTION_PICKUP);
 
 	return S_OK;
 }
@@ -663,7 +661,6 @@ void CPlayer::Controll(void)
 	{// 行動できるとき
 
 		if (m_sMotionFrag.bATKL == false && 
-			m_pSnowBallL != nullptr &&
 			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_LB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
 		{// 左攻撃
 			// 攻撃判定ON
@@ -671,7 +668,6 @@ void CPlayer::Controll(void)
 		}
 
 		if (m_sMotionFrag.bATKR == false &&
-			m_pSnowBallR != nullptr &&
 			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_RB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
 		{// 右攻撃
 		 // 攻撃判定ON
@@ -814,6 +810,7 @@ void CPlayer::FollowSnowBall(void)
 				pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
 
 				my_particle::Create(pos, my_particle::TYPE_BRASTATTACK);
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_ICEGET);
 			}
 		}
 
@@ -866,6 +863,7 @@ void CPlayer::FollowSnowBall(void)
 				pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
 
 				my_particle::Create(pos, my_particle::TYPE_BRASTATTACK);
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_ICEGET);
 			}
 		}
 
@@ -1041,12 +1039,18 @@ void CPlayer::Atack(void)
 					}
 				}
 
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_SWING);
 			}
 				break;
 			case MOTION_PICKUP:	// 雪玉を拾う
 				CreateBall();
-
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_SNOWGET);
 				break;
+
+			case MOTION_WALK:
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_WALK);
+				break;
+
 			default:
 				break;
 			}

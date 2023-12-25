@@ -206,6 +206,9 @@ void CSantaBag::Hit(void)
 	// ダメージ状態に設定
 	m_state = STATE_DMG;
 	m_fStateTime = TIME_DMG;
+
+	// 袋ダメージ音
+	CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_SANTABAG_DMG);
 }
 
 //==========================================================================
