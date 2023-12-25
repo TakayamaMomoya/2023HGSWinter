@@ -63,7 +63,7 @@ HRESULT CEnemyReindeer::Init(void)
 	CEnemy::Init();
 
 	// çsìÆ
-	m_Action = ACTION_CHASE;
+	m_Action = ACTION_PROXIMITY;
 
 	// à⁄ìÆë¨ìx
 	m_fSpeed = VELOCITY_WALK;
@@ -144,9 +144,10 @@ void CEnemyReindeer::ActWait(void)
 
 	if (TIME_WAIT <= m_fActTime)
 	{// ë“ã@éûä‘í¥Ç¶ÇΩÇÁ
-
+		
 		// ãﬂê⁄çUåÇ
 		m_fActTime = 0.0f;
+		m_Action = ACTION_PROXIMITY;
 
 		// í«Ç¢íÖÇ´îªíË
 		m_bCatchUp = CircleRange3D(GetPosition(), m_TargetPosition, LENGTH_PUNCH, 0.0f);

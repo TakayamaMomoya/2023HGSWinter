@@ -907,17 +907,17 @@ END_MOTIONSET
 MOTIONSET
 	LOOP = 0		# ループするかどうか[0:ループしない / 1:ループする]
 	NUM_KEY = 3		# キー数
-	MOVE = 1		# 移動できるかどうか[0:移動できない / 1:移動できる]
+	MOVE = 0		# 移動できるかどうか[0:移動できない / 1:移動できる]
 
 	#===================
 	# 攻撃情報
 	#===================
 	ATTACKINFO
-		COLLISIONPARTS = 16
-		ATTACKRANGE = 0.00
-		OFFSET = 0.00 0.00 0.00
-		ATTACKCOUNT = 0 0
-		INPACTCOUNT = 4
+		COLLISIONPARTS = 3
+		ATTACKRANGE = 110.00
+		OFFSET = 0.00 0.00 -16.00
+		ATTACKCOUNT = 11 19
+		INPACTCOUNT = -1
 		DAMAGE = 0
 	END_ATTACKINFO
 

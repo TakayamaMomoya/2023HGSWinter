@@ -32,6 +32,7 @@
 #include "listmanager.h"
 #include "collisionobject.h"
 #include "limitereamanager.h"
+#include "santabag.h"
 
 // 子クラス
 #include "enemy_boss.h"
@@ -459,6 +460,15 @@ void CEnemy::Update(void)
 		Kill();
 		Uninit();
 		return;
+	}
+
+	// バッグのリスト取得
+	std::list<CSantaBag*> BagList = CSantaBag::GetList();
+
+	// 要素分繰り返し
+	for (const auto& bag : BagList)
+	{
+		m_TargetPosition = bag->GetPosition();
 	}
 
 	// 大人の壁

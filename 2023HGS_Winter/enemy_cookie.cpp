@@ -202,6 +202,9 @@ void CEnemyCookie::ActAttackProximity(void)
 		// 攻撃フラグを立てる
 		m_sMotionFrag.bATK = true;
 
+		// ターゲットの方を向く
+		RotationTarget();
+
 		// 行動別移動処理
 		AttackPunch();
 	}
