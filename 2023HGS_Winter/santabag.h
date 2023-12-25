@@ -30,7 +30,6 @@ public:
 
 	// メンバ関数
 	void Hit(void);	// ヒット処理
-	void AAAAAAA(int i) { m_fStateTime = i; }	// ヒット処理
 
 	// 静的関数
 	static CSantaBag *Create(const D3DXVECTOR3 pos);

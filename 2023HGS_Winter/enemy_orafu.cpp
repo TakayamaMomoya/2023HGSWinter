@@ -1,14 +1,16 @@
 //==========================================================================
 // 
-//  クッキー敵処理 [enemy_cookie.cpp]
+//  オラフ敵処理 [enemy_orafu.cpp]
 //  Author : 相馬靜雅
 // 
 //==========================================================================
-#include "enemy_cookie.h"
+#include "enemy_orafu.h"
 #include "manager.h"
 #include "debugproc.h"
 #include "calculation.h"
 #include "particle.h"
+#include "santabag.h"
+#include "player.h"
 
 //==========================================================================
 // 定数定義
@@ -16,6 +18,7 @@
 namespace
 {
 	const float LENGTH_PUNCH = 300.0f;		// パンチの長さ
+	const float LENGTH_PLAYERCHASE = 600.0f;	// プレイヤー追いかける距離
 	const float VELOCITY_WALK = 1.0f;		// 歩き
 	const float TIME_WAIT = 2.0f;			// 待機
 }
@@ -23,17 +26,17 @@ namespace
 //==========================================================================
 // 関数ポインタ
 //==========================================================================
-CEnemyCookie::ACT_FUNC CEnemyCookie::m_ActFuncList[] =
+CEnemyOrafu::ACT_FUNC CEnemyOrafu::m_ActFuncList[] =
 {
-	&CEnemyCookie::ActChase,			// 追い掛け
-	&CEnemyCookie::ActAttackProximity,	// 近接
-	&CEnemyCookie::ActWait,				// 待機
+	&CEnemyOrafu::ActChase,			// 追い掛け
+	&CEnemyOrafu::ActAttackProximity,	// 近接
+	&CEnemyOrafu::ActWait,				// 待機
 };
 
 //==========================================================================
 // コンストラクタ
 //==========================================================================
-CEnemyCookie::CEnemyCookie(int nPriority) : CEnemy(nPriority)
+CEnemyOrafu::CEnemyOrafu(int nPriority) : CEnemy(nPriority)
 {
 	m_Action = ACTION_CHASE;	// 行動
 	m_fActTime = 0.0f;			// 行動カウンター
@@ -43,7 +46,7 @@ CEnemyCookie::CEnemyCookie(int nPriority) : CEnemy(nPriority)
 //==========================================================================
 // デストラクタ
 //==========================================================================
-CEnemyCookie::~CEnemyCookie()
+CEnemyOrafu::~CEnemyOrafu()
 {
 
 }
@@ -51,7 +54,7 @@ CEnemyCookie::~CEnemyCookie()
 //==========================================================================
 // 初期化処理
 //==========================================================================
-HRESULT CEnemyCookie::Init(void)
+HRESULT CEnemyOrafu::Init(void)
 {
 	//初期化処理
 	CEnemy::Init();
@@ -65,7 +68,7 @@ HRESULT CEnemyCookie::Init(void)
 //==========================================================================
 // 終了処理
 //==========================================================================
-void CEnemyCookie::Uninit(void)
+void CEnemyOrafu::Uninit(void)
 {
 	// 終了処理
 	CEnemy::Uninit();
@@ -74,7 +77,7 @@ void CEnemyCookie::Uninit(void)
 //==========================================================================
 // 殺す
 //==========================================================================
-void CEnemyCookie::Kill(void)
+void CEnemyOrafu::Kill(void)
 {
 	// 死亡処理
 	CEnemy::Kill();
@@ -83,7 +86,7 @@ void CEnemyCookie::Kill(void)
 //==========================================================================
 // 更新処理
 //==========================================================================
-void CEnemyCookie::Update(void)
+void CEnemyOrafu::Update(void)
 {
 	// 死亡の判定
 	if (IsDeath() == true)
@@ -98,7 +101,7 @@ void CEnemyCookie::Update(void)
 //==========================================================================
 // 行動設定
 //==========================================================================
-void CEnemyCookie::ActionSet(void)
+void CEnemyOrafu::ActionSet(void)
 {
 
 }
@@ -106,7 +109,7 @@ void CEnemyCookie::ActionSet(void)
 //==========================================================================
 // 行動更新
 //==========================================================================
-void CEnemyCookie::UpdateAction(void)
+void CEnemyOrafu::UpdateAction(void)
 {
 	// 状態別処理
 	(this->*(m_ActFuncList[m_Action]))();
@@ -115,7 +118,7 @@ void CEnemyCookie::UpdateAction(void)
 //==========================================================================
 // 待機
 //==========================================================================
-void CEnemyCookie::ActWait(void)
+void CEnemyOrafu::ActWait(void)
 {
 	// 待機モーション設定
 	m_pMotion->Set(MOTION_DEF);
@@ -131,7 +134,6 @@ void CEnemyCookie::ActWait(void)
 
 		// 近接攻撃
 		m_fActTime = 0.0f;
-		m_Action = ACTION_PROXIMITY;
 
 		// 追い着き判定
 		m_bCatchUp = CircleRange3D(GetPosition(), m_TargetPosition, LENGTH_PUNCH, 0.0f);
@@ -142,10 +144,37 @@ void CEnemyCookie::ActWait(void)
 //==========================================================================
 // 追い掛け
 //==========================================================================
-void CEnemyCookie::ActChase(void)
+void CEnemyOrafu::ActChase(void)
 {
 	// 移動フラグを立てる
 	m_sMotionFrag.bMove = true;
+
+	// 位置取得
+	D3DXVECTOR3 pos = GetPosition();
+
+	// プレイヤー情報
+	CPlayer* pPlayer = CManager::GetInstance()->GetScene()->GetPlayer(m_nTargetPlayerIndex);
+	if (pPlayer == NULL)
+	{
+		return;
+	}
+
+	// 円の判定
+	if (CircleRange2D(GetPosition(), pPlayer->GetPosition(), LENGTH_PLAYERCHASE, 0.0f))
+	{
+		m_TargetPosition = pPlayer->GetPosition();
+	}
+	else
+	{
+		// バッグのリスト取得
+		std::list<CSantaBag*> BagList = CSantaBag::GetList();
+
+		// 要素分繰り返し
+		for (const auto& bag : BagList)
+		{
+			m_TargetPosition = bag->GetPosition();
+		}
+	}
 
 	// ターゲットの方を向く
 	RotationTarget();
@@ -157,7 +186,7 @@ void CEnemyCookie::ActChase(void)
 //==========================================================================
 // 歩き追い掛け
 //==========================================================================
-void CEnemyCookie::ChaseNormal(void)
+void CEnemyOrafu::ChaseNormal(void)
 {
 	// 情報取得
 	D3DXVECTOR3 move = GetMove();
@@ -175,7 +204,7 @@ void CEnemyCookie::ChaseNormal(void)
 //==========================================================================
 // 近接攻撃
 //==========================================================================
-void CEnemyCookie::ActAttackProximity(void)
+void CEnemyOrafu::ActAttackProximity(void)
 {
 	if (m_bCatchUp == false)
 	{// 追い着いてない時
@@ -210,7 +239,7 @@ void CEnemyCookie::ActAttackProximity(void)
 //==========================================================================
 // パンチ攻撃
 //==========================================================================
-void CEnemyCookie::AttackPunch(void)
+void CEnemyOrafu::AttackPunch(void)
 {
 	int nType = m_pMotion->GetType();
 	if (nType == MOTION_PUNCH && m_pMotion->IsFinish() == true)
@@ -240,7 +269,7 @@ void CEnemyCookie::AttackPunch(void)
 //==========================================================================
 // 描画処理
 //==========================================================================
-void CEnemyCookie::Draw(void)
+void CEnemyOrafu::Draw(void)
 {
 	// 描画処理
 	CEnemy::Draw();
@@ -249,7 +278,7 @@ void CEnemyCookie::Draw(void)
 //==========================================================================
 // モーションセット
 //==========================================================================
-void CEnemyCookie::MotionSet(void)
+void CEnemyOrafu::MotionSet(void)
 {
 	if (m_pMotion->IsFinish() == true)
 	{// 終了していたら
@@ -292,7 +321,7 @@ void CEnemyCookie::MotionSet(void)
 //==========================================================================
 // ターゲットの方を向く
 //==========================================================================
-void CEnemyCookie::RotationTarget(void)
+void CEnemyOrafu::RotationTarget(void)
 {
 	// 位置取得
 	D3DXVECTOR3 pos = GetPosition();
@@ -321,7 +350,7 @@ void CEnemyCookie::RotationTarget(void)
 //==========================================================================
 // 攻撃時処理
 //==========================================================================
-void CEnemyCookie::AttackAction(int nModelNum, CMotion::AttackInfo ATKInfo)
+void CEnemyOrafu::AttackAction(int nModelNum, CMotion::AttackInfo ATKInfo)
 {
 	// モーション情報取得
 	int nMotionType = m_pMotion->GetType();
@@ -342,7 +371,7 @@ void CEnemyCookie::AttackAction(int nModelNum, CMotion::AttackInfo ATKInfo)
 //==========================================================================
 // 攻撃判定中処理
 //==========================================================================
-void CEnemyCookie::AttackInDicision(CMotion::AttackInfo ATKInfo)
+void CEnemyOrafu::AttackInDicision(CMotion::AttackInfo ATKInfo)
 {
 	// 基底の攻撃判定中処理
 	CEnemy::AttackInDicision(ATKInfo);
