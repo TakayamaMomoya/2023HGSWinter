@@ -12,6 +12,7 @@
 #include "debugproc.h"
 #include "title_screen.h"
 #include "sound.h"
+#include "particle.h"
 
 //==========================================================================
 // 静的メンバ変数宣言
@@ -73,6 +74,14 @@ void CTitle::Update(void)
 	CManager::GetInstance()->GetDebugProc()->Print(
 		"現在のモード：【タイトル】\n"
 		"切り替え：【 F 】\n\n");
+
+
+	// 雪
+	/*m_nIntervalSnow = (m_nIntervalSnow + 1) % 8;
+	if (m_nIntervalSnow == 0)*/
+	{
+		my_particle::Create(mylib_const::DEFAULT_VECTOR3, my_particle::TYPE_FALLSNOW);
+	}
 
 	// キーボード情報取得
 	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
