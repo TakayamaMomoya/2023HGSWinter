@@ -123,7 +123,7 @@ HRESULT CTitleScreen::Init(void)
 			// サイズ取得
 			m_pObj2D[nCntSelect]->SetSize(D3DXVECTOR2(640.0f, 360.0f));	// サイズ
 			m_pObj2D[nCntSelect]->SetPosition(D3DXVECTOR3(640.0f, 360.0f, 0.0f));	// 位置
-			m_pObj2D[nCntSelect]->SetColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));	// 色
+			m_pObj2D[nCntSelect]->SetColor(D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f));	// 色
 			break;
 
 		case VTX_LOGO:
@@ -234,7 +234,7 @@ void CTitleScreen::Update(void)
 {
 
 	// 斬撃更新
-	UpdateSlash();
+	//UpdateSlash();
 
 	for (int nCntSelect = 0; nCntSelect < VTX_LOGO_MAX; nCntSelect++)
 	{
