@@ -207,6 +207,15 @@ void CBullet::Uninit(void)
 //==========================================================================
 void CBullet::Update(void)
 {
+	if (GetHeightLen() < 40.0f)
+	{// 重力
+		D3DXVECTOR3 move = GetMove();
+
+		move.y -= 0.05f;
+
+		SetMove(move);
+	}
+
 	// 位置更新
 	UpdatePos();
 
