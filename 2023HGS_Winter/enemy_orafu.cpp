@@ -60,7 +60,7 @@ HRESULT CEnemyOrafu::Init(void)
 	CEnemy::Init();
 
 	// çsìÆ
-	m_Action = ACTION_CHASE;
+	m_Action = ACTION_PROXIMITY;
 
 	return S_OK;
 }

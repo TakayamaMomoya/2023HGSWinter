@@ -57,7 +57,7 @@ HRESULT CEnemyCookie::Init(void)
 	CEnemy::Init();
 
 	// çsìÆ
-	m_Action = ACTION_CHASE;
+	m_Action = ACTION_PROXIMITY;
 
 	return S_OK;
 }
@@ -131,6 +131,7 @@ void CEnemyCookie::ActWait(void)
 
 		// ãﬂê⁄çUåÇ
 		m_fActTime = 0.0f;
+		m_Action = ACTION_PROXIMITY;
 
 		// í«Ç¢íÖÇ´îªíË
 		m_bCatchUp = CircleRange3D(GetPosition(), m_TargetPosition, LENGTH_PUNCH, 0.0f);
