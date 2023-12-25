@@ -17,7 +17,7 @@
 //==========================================================================
 namespace
 {
-	const float LENGTH_PUNCH = 300.0f;		// パンチの長さ
+	const float LENGTH_PUNCH = 110.0f;		// パンチの長さ
 	const float LENGTH_PLAYERCHASE = 600.0f;	// プレイヤー追いかける距離
 	const float VELOCITY_WALK = 1.0f;		// 歩き
 	const float TIME_WAIT = 2.0f;			// 待機
@@ -134,6 +134,7 @@ void CEnemyOrafu::ActWait(void)
 
 		// 近接攻撃
 		m_fActTime = 0.0f;
+		m_Action = ACTION_PROXIMITY;
 
 		// 追い着き判定
 		m_bCatchUp = CircleRange3D(GetPosition(), m_TargetPosition, LENGTH_PUNCH, 0.0f);
@@ -160,7 +161,7 @@ void CEnemyOrafu::ActChase(void)
 	}
 
 	// 円の判定
-	if (CircleRange2D(GetPosition(), pPlayer->GetPosition(), LENGTH_PLAYERCHASE, 0.0f))
+	if (CircleRange3D(GetPosition(), pPlayer->GetPosition(), LENGTH_PLAYERCHASE, 0.0f))
 	{
 		m_TargetPosition = pPlayer->GetPosition();
 	}
@@ -208,6 +209,33 @@ void CEnemyOrafu::ActAttackProximity(void)
 {
 	if (m_bCatchUp == false)
 	{// 追い着いてない時
+
+		// 位置取得
+		D3DXVECTOR3 pos = GetPosition();
+
+		// プレイヤー情報
+		CPlayer* pPlayer = CManager::GetInstance()->GetScene()->GetPlayer(m_nTargetPlayerIndex);
+		if (pPlayer == NULL)
+		{
+			return;
+		}
+
+		// 円の判定
+		if (CircleRange3D(GetPosition(), pPlayer->GetPosition(), LENGTH_PLAYERCHASE, 0.0f))
+		{
+			m_TargetPosition = pPlayer->GetPosition();
+		}
+		else
+		{
+			// バッグのリスト取得
+			std::list<CSantaBag*> BagList = CSantaBag::GetList();
+
+			// 要素分繰り返し
+			for (const auto& bag : BagList)
+			{
+				m_TargetPosition = bag->GetPosition();
+			}
+		}
 
 		// ターゲットの方を向く
 		RotationTarget();

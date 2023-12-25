@@ -22,10 +22,6 @@ public:
 	enum SceneType
 	{
 		SCENE_MAIN = 0,			// メイン
-		SCENE_MAINCLEAR,		// メインクリア
-		SCENE_EVOLUSION,		// 進化
-		SCENE_RUSH,				// ラッシュ
-		SCENE_BOSS,				// ボス
 		SCENE_TRANSITIONWAIT,	// 遷移待機
 		SCENE_TRANSITION,		// 遷移
 		SCENE_MAX
@@ -55,7 +51,6 @@ public:
 private:
 
 	// メンバ関数
-	void SetBoss(void);
 	void SetEnemy(void);
 
 	// メンバ変数

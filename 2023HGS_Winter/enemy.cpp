@@ -86,6 +86,7 @@ CEnemy::CEnemy(int nPriority) : CObjectChara(nPriority)
 	m_pMotion = NULL;					// モーションの情報
 	m_colorType = COLORTYPE_NORMAL;		// 色ごとの種類
 	m_pList = NULL;				// リストのオブジェクト
+	m_pShadow = NULL;
 
 	memset(&m_pChild[0], NULL, sizeof(m_pChild));	// 子のポインタ
 }
@@ -184,7 +185,7 @@ HRESULT CEnemy::Init(void)
 	SetRotation(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	// 影の生成
-	m_pShadow = CShadow::Create(GetPosition(), GetRadius() * 0.5f);
+	//m_pShadow = CShadow::Create(GetPosition(), GetRadius() * 0.5f);
 
 	// ポーズのリセット
 	m_pMotion->ResetPose(0);
@@ -1829,10 +1830,12 @@ void CEnemy::AttackInDicision(CMotion::AttackInfo ATKInfo)
 	}
 
 #if _DEBUG
-	//CEffect3D::Create(weponpos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), ATKInfo.fRangeSize, 10, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
+	CEffect3D::Create(weponpos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), ATKInfo.fRangeSize, 10, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
 #endif
 
-	// プレイヤー情報
+	//============================
+	// プレイヤーと判定
+	//============================
 	for (int nCntPlayer = 0; nCntPlayer < mylib_const::MAX_PLAYER; nCntPlayer++)
 	{
 		CPlayer *pPlayer = CManager::GetInstance()->GetScene()->GetPlayer(nCntPlayer);
@@ -1842,7 +1845,7 @@ void CEnemy::AttackInDicision(CMotion::AttackInfo ATKInfo)
 		}
 
 		// プレイヤーの向き
-		D3DXVECTOR3 PlayerPos = pPlayer->GetRotation();
+		D3DXVECTOR3 PlayerPos = pPlayer->GetPosition();
 
 		// 判定サイズ取得
 		float fRadius = pPlayer->GetRadius();
@@ -1878,8 +1881,23 @@ void CEnemy::AttackInDicision(CMotion::AttackInfo ATKInfo)
 				// なんかする
 				//my_particle::Create(TargetPos, my_particle::TYPE_OFFSETTING);
 			}
-
 		}
+
+		//============================
+		// 袋と判定
+		//============================
+		std::list<CSantaBag*> BagList = CSantaBag::GetList();
+
+		// 要素分繰り返し
+		for (const auto& candidate : BagList)
+		{
+			// 当たり判定
+			if (CircleRange3D(weponpos, candidate->GetPosition(), ATKInfo.fRangeSize, 80.0f))
+			{
+				candidate->Hit();
+			}
+		}
+
 	}
 }
 

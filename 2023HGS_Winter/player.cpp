@@ -173,7 +173,7 @@ HRESULT CPlayer::Init(void)
 	D3DXVECTOR3 pos = GetPosition();
 
 	// 影の生成
-	m_pShadow = CShadow::Create(pos, 50.0f);
+	//m_pShadow = CShadow::Create(pos, 50.0f);
 
 	// ポーズのリセット
 	m_pMotion->ResetPose(MOTION_DEF);
@@ -412,25 +412,14 @@ void CPlayer::Controll(void)
 
 	// 経過時間取得
 	float fCurrentTime = CManager::GetInstance()->GetDeltaTime();
-
-
-	std::list<CSantaBag*> BagList = CSantaBag::GetList();
-
-	// 要素分繰り返し
-	for (const auto& candidate : BagList)
-	{
-		// 当たり判定
-		if (CircleRange2D(pos, candidate->GetPosition(), GetRadius(), 80.0f))
-		{
-			candidate->Hit();
-		}
-	}
 	
 
 	if (CGame::GetGameManager()->IsControll())
 	{// 行動できるとき
 
 		if (m_pMotion->IsGetMove(nMotionType) == 1 &&
+			m_state != STATE_DMG &&
+			m_state != STATE_KNOCKBACK &&
 			m_state != STATE_DEAD &&
 			m_state != STATE_FADEOUT)
 		{// 移動可能モーションの時

@@ -24,7 +24,7 @@ MODEL_FILENAME = data/MODEL/enemy/orafu/04_LArm.x	# [4]左腕
 # キャラクター情報
 #------------------------------------------------------------------------------
 CHARACTERSET
-	VELOCITY = 0.5		
+	VELOCITY = 1.2		
 	JUMP = 0.00		
 	RADIUS = 100.00		
 	HEIGHT = 0.00		

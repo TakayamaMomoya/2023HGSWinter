@@ -146,15 +146,6 @@ HRESULT CElevation::Init(const char *pText)
 	m_fBrushStrength = MAX_MOVE;			// ブラシ強さ
 	m_fBrushRange = MAX_RANGE;				// 範囲
 
-	//for (int nCntHeight = 0; nCntHeight < m_aInfo.nHeightBlock + 1; nCntHeight++)
-	//{// 縦の分割分繰り返す
-
-	//	for (int nCntWidth = 0; nCntWidth < m_aInfo.nWidthBlock + 1; nCntWidth++)
-	//	{// 横の分割分繰り返す
-	//		m_VtxPos[nCntWidth + (nCntHeight * (m_aInfo.nWidthBlock + 1))].y = m_aInfo.pVtxPos[nCntWidth + (nCntHeight * (m_aInfo.nWidthBlock + 1))].y;
-	//	}
-	//}
-
 	// オブジェクト3Dメッシュの初期化処理
 	hr = CObject3DMesh::Init(CObject3DMesh::TYPE_FIELD);
 
@@ -166,6 +157,12 @@ HRESULT CElevation::Init(const char *pText)
 	// 頂点情報設定
 	SetVtx();
 	m_bChange = true;	// 変更のフラグ
+
+
+	D3DXCOLOR *pVtxCol = GetVtxCol();
+
+	// 全ての要素を書き換え
+	std::fill(pVtxCol, pVtxCol + GetNumVertex(), D3DXCOLOR(0.78f, 0.78f, 0.78f, 1.0f));
 
 	return S_OK;
 }

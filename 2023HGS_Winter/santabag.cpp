@@ -10,6 +10,8 @@
 #include "renderer.h"
 #include "sound.h"
 #include "calculation.h"
+#include "game.h"
+#include "fade.h"
 
 //==========================================================================
 // 定数定義
@@ -17,7 +19,7 @@
 namespace
 {
 	const char* BAGMODEL = "data\\MODEL\\santabag_01.x";
-	const int MAX_LIFE = 5;	// 体力の最大値
+	const int MAX_LIFE = 10;	// 体力の最大値
 	const float TIME_DMG = static_cast<float>(30) / static_cast<float>(60);			// ダメージ時間 
 	const float TIME_INVICIBLE = static_cast<float>(60) / static_cast<float>(60);	// 無敵時間
 	const float NUM_TKTK = 10.0f;		// チカチカする回数
@@ -134,7 +136,14 @@ void CSantaBag::Update(void)
 
 	if (m_nLife < 0)
 	{
+		// クリア失敗
+		CGame::SetEnableClear(false);
+
+		// 終了処理
 		Uninit();
+
+		// リザルトに遷移
+		CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_RESULT);
 	}
 }
 

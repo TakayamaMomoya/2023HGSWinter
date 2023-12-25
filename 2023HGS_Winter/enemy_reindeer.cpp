@@ -17,7 +17,7 @@
 //==========================================================================
 namespace
 {
-	const float LENGTH_PUNCH = 300.0f;		// パンチの長さ
+	const float LENGTH_PUNCH = 110.0f;		// パンチの長さ
 	const float VELOCITY_WALK = 1.0f;		// 歩き
 	const float VELOCITY_DASH = 7.0f;		// 走る
 	const float TIME_WAIT = 2.0f;			// 待機
@@ -29,7 +29,7 @@ namespace
 //==========================================================================
 CEnemyReindeer::ACT_FUNC CEnemyReindeer::m_ActFuncList[] =
 {
-	&CEnemyReindeer::ActChase,			// 追い掛け
+	&CEnemyReindeer::ActChase,				// 追い掛け
 	&CEnemyReindeer::ActAttackProximity,	// 近接
 	&CEnemyReindeer::ActWait,				// 待機
 };

@@ -109,7 +109,7 @@ CImpactWave *CImpactWave::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXCOLOR col
 			pObjMeshCylinder->m_nTexIdx = CManager::GetInstance()->GetTexture()->Regist(m_apFilename[nTexType]);
 
 			// テクスチャの割り当て
-			pObjMeshCylinder->BindTexture(pObjMeshCylinder->m_nTexIdx);
+			//pObjMeshCylinder->BindTexture(pObjMeshCylinder->m_nTexIdx);
 
 			// 初期化処理
 			pObjMeshCylinder->Init();
