@@ -412,13 +412,13 @@ void CBullet::CollisionEnemy(void)
 
 		m_bFinish = true;
 
-		if (m_bAutoDeath)
-		{
+		if (GetHeightLen() < 40.0f)
+		{// d—Í			
 			Uninit();
 		}
+
 		return;
 	}
-
 }
 
 //==========================================================================
