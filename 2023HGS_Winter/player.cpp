@@ -57,7 +57,7 @@ namespace
 	const int INTERVAL_ATK = 15;		// 攻撃の猶予
 	const int MAX_BUFFSTATUS = 100;		// ステータスのバフ最大値
 	const float MAX_BALL_SIZE = 40.0f;	// 雪玉の最大サイズ
-	const float SPEED_GRAW_BALL = 1.1f;	// 雪玉の成長速度
+	const float SPEED_GRAW_BALL = 0.7f;	// 雪玉の成長速度
 	const float LINE_ICE = 30.0f;	// 氷球になるライン
 }
 
