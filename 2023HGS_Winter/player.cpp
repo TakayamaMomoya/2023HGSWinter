@@ -806,6 +806,7 @@ void CPlayer::FollowSnowBall(void)
 				pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
 
 				my_particle::Create(pos, my_particle::TYPE_BRASTATTACK);
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_ICEGET);
 			}
 		}
 
@@ -858,6 +859,7 @@ void CPlayer::FollowSnowBall(void)
 				pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
 
 				my_particle::Create(pos, my_particle::TYPE_BRASTATTACK);
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_ICEGET);
 			}
 		}
 
@@ -1033,12 +1035,18 @@ void CPlayer::Atack(void)
 					}
 				}
 
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_SWING);
 			}
 				break;
 			case MOTION_PICKUP:	// á‹Ê‚ðE‚¤
 				CreateBall();
-
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_SNOWGET);
 				break;
+
+			case MOTION_WALK:
+				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_WALK);
+				break;
+
 			default:
 				break;
 			}

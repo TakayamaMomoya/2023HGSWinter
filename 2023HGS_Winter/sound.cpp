@@ -23,15 +23,15 @@
 CSound::SOUNDINFO CSound::m_aSoundInfo[LABEL_MAX] = 
 {
 	{ "data/BGM/title.wav", -1 },			// タイトル
-	{ "data/BGM/gameBGM.wav", -1 },			// ゲーム中
+	{ "data/BGM/Xmas.wav", -1 },			// ゲーム中
 	{ "data/BGM/bossBGM.wav", -1 },			// ゲーム中
 	{ "data/BGM/result.wav", -1 },			// タイトル
 	{ "data/SE/explosion000moto.wav", 0 },		// 爆発
 	{ "data/SE/game_clear.wav", 0 },			// キュピーン
-	{ "data/SE/walk_glass.wav", 0 },			// 歩行
+	{ "data/SE/walk.wav", 0 },			// 歩行
 	{ "data/SE/jump.wav", 0 },			// ジャンプ
 	{ "data/SE/field_01.wav", 0 },			// 地面
-	{ "data/SE/swing_01.wav", 0 },			// スイング
+	{ "data/SE/swing.wav", 0 },			// スイング
 	{ "data/SE/impact_01.wav", 0 },			// 衝撃
 	{ "data/SE/kill_01.wav", 0 },			// ダメージ
 	{ "data/SE/comboin_01.wav", 0 },			// ダメージ
@@ -64,6 +64,9 @@ CSound::SOUNDINFO CSound::m_aSoundInfo[LABEL_MAX] =
 	{ "data/SE/boss_bulletcharge.wav", 0 },	// ボスの弾チャージ
 	{ "data/SE/boss_talk.wav", 0 },		// ボストーク
 	{ "data/SE/ranking_00.wav", 0 },		// ボストーク
+	{ "data/SE/snowget.wav", 0 },		// ボストーク
+	{ "data/SE/enemydmg_034.wav", 0 },		// ボストーク
+	{ "data/SE/iceget.wav", 0 },		// ボストーク
 
 };	// サウンドの情報
 
