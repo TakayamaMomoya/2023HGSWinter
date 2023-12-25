@@ -18,6 +18,7 @@
 class CShadow;
 class CTargetPoint;
 class CHP_GaugePlayer;
+class CMeshSphere;
 
 //==========================================================================
 // クラス定義
@@ -31,13 +32,9 @@ protected:
 	{
 		MOTION_DEF = 0,			// ニュートラルモーション
 		MOTION_WALK,			// 移動モーション
-		MOTION_ATK,				// 攻撃
-		MOTION_ATK2,			// 攻撃(派生)
-		MOTION_KNOCKBACK,		// やられモーション
-		MOTION_DEAD,			// 死亡モーション
-		MOTION_JUMP,			// ジャンプ
-		MOTION_FALL,			// 落下中
-		MOTION_EVOLUTION,		// 進化中
+		MOTION_ATK_R,			// 攻撃右
+		MOTION_ATK_L,			// 攻撃左
+		MOTION_PICKUP,			// 拾いモーション
 		MOTION_MAX
 	};
 
@@ -45,7 +42,8 @@ protected:
 	struct SMotionFrag
 	{
 		bool bJump;			// ジャンプ中かどうか
-		bool bATK;			// 攻撃中かどうか
+		bool bATKR;			// 右攻撃中かどうか
+		bool bATKL;			// 左攻撃中かどうか
 		bool bKnockBack;	// ノックバック中かどうか
 		bool bDead;			// 死亡中かどうか
 		bool bMove;			// 移動中かどうか
@@ -110,9 +108,15 @@ private:
 	void FadeOut(void);		// フェードアウト
 	void Invincible(void);	// 無敵
 	virtual void Controll(void);	// 操作
+	void CreateBall(void);	// 雪玉の生成
+	void FollowSnowBall(void);	// 雪玉の追従
 
 	void ChangeMotion(const char* pMotionFile);	// モーションファイル変更
 
+	CMeshSphere *m_pSnowBallL;	// 左手の雪玉
+	CMeshSphere *m_pSnowBallR;	// 右手の雪玉
+	D3DXMATRIX *m_pMtxSnowBallL;	// 左手の雪玉持つ用のマトリックス
+	D3DXMATRIX *m_pMtxSnowBallR;	// 左手の雪玉持つ用のマトリックス
 	STATE m_Oldstate;			// 前回の状態
 	D3DXCOLOR m_mMatcol;		// マテリアルの色
 	D3DXVECTOR3 m_posKnokBack;	// ノックバックの位置

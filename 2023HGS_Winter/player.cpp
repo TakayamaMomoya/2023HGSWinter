@@ -38,14 +38,15 @@
 #include "limitereamanager.h"
 #include "beam.h"
 #include "santabag.h"
-
+#include "meshsphere.h"
+#include "universal.h"
 
 //==========================================================================
 // 定数定義
 //==========================================================================
 namespace
 {
-	const char* CHARAFILE = "data\\TEXT\\character\\player\\motion_player.txt";	// キャラクターファイル
+	const char* CHARAFILE = "data\\TEXT\\character\\player\\motion_santa.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;	// ジャンプ力初期値
 	const int INVINCIBLE_INT = 2;		// 無敵の間隔
 	const int INVINCIBLE_TIME = 90;		// 無敵の時間
@@ -75,13 +76,18 @@ CPlayer::CPlayer(int nPriority) : CObjectChara(nPriority)
 	m_nCntWalk = 0;						// 歩行カウンター
 	m_state = STATE_NONE;				// 状態
 	m_pMotion = NULL;					// モーションの情報
-	m_sMotionFrag.bATK = false;			// モーションのフラグ
+	m_sMotionFrag.bATKR = false;			// モーションのフラグ
+	m_sMotionFrag.bATKL = false;			// モーションのフラグ
 	m_sMotionFrag.bJump = false;		// モーションのフラグ
 	m_sMotionFrag.bKnockBack = false;	// モーションのフラグ
 	m_sMotionFrag.bDead = false;		// モーションのフラグ
 	m_sMotionFrag.bMove = false;		// モーションのフラグ
 
 	// プライベート変数
+	m_pSnowBallL = nullptr;							// 左の雪玉
+	m_pSnowBallR = nullptr;							// 右の雪玉
+	m_pMtxSnowBallL = nullptr;						// 左の雪玉持つ用のポインタ
+	m_pMtxSnowBallR = nullptr;						// 右の雪玉持つ用のポインタ
 	m_Oldstate = STATE_NONE;						// 前回の状態
 	m_mMatcol = mylib_const::DEFAULT_COLOR;			// マテリアルの色
 	m_posKnokBack = mylib_const::DEFAULT_VECTOR3;	// ノックバックの位置
@@ -188,6 +194,20 @@ void CPlayer::Uninit(void)
 	{
 		//m_pShadow->Uninit();
 		m_pShadow = NULL;
+	}
+
+	// 右の雪玉を消す
+	if (m_pSnowBallR != nullptr)
+	{
+		m_pSnowBallR->Uninit();
+		m_pSnowBallR = nullptr;
+	}
+
+	// 左の雪玉を消す
+	if (m_pSnowBallL != nullptr)
+	{
+		m_pSnowBallL->Uninit();
+		m_pSnowBallL = nullptr;
 	}
 
 	// 終了処理
@@ -324,7 +344,17 @@ void CPlayer::Update(void)
 				break;
 			}
 		}
+
+		// 手のマトリックス取得
+		aInfo = m_pMotion->GetInfo(MOTION_ATK_L);
+		m_pMtxSnowBallL = GetModel()[aInfo.AttackInfo[0]->nCollisionNum]->GetPtrWorldMtx();
+
+		aInfo = m_pMotion->GetInfo(MOTION_ATK_R);
+		m_pMtxSnowBallR = GetModel()[aInfo.AttackInfo[0]->nCollisionNum]->GetPtrWorldMtx();
 	}
+
+	// 雪玉の追従
+	FollowSnowBall();
 
 #if 0
 	// デバッグ表示
@@ -630,14 +660,83 @@ void CPlayer::Controll(void)
 		m_state != STATE_FADEOUT)
 	{// 行動できるとき
 
-		if (m_sMotionFrag.bATK == false && 
-			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_A, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
-		{// 攻撃
-
+		if (m_sMotionFrag.bATKL == false && 
+			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_LB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
+		{// 左攻撃
 			// 攻撃判定ON
-			m_sMotionFrag.bJump = false;
-			m_sMotionFrag.bATK = true;
+			m_sMotionFrag.bATKL = true;
 		}
+
+		if (m_sMotionFrag.bATKR == false &&
+			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_RB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
+		{// 右攻撃
+		 // 攻撃判定ON
+			m_sMotionFrag.bATKR = true;
+		}
+	}
+}
+
+//==========================================================================
+// 雪玉の生成
+//==========================================================================
+void CPlayer::CreateBall(void)
+{
+	// トランスフォームの設定
+	D3DXVECTOR3 pos = GetPosition();
+
+	if (m_pSnowBallR == nullptr)
+	{// 右の雪玉生成
+		m_pSnowBallR = CMeshSphere::Create(pos, 20.0f, 0);
+
+		if (m_pSnowBallR != nullptr)
+		{
+			m_pSnowBallR->SetSizeDest(20.0f);
+		}
+	}
+
+	if (m_pSnowBallL == nullptr)
+	{// 左の雪玉生成
+		m_pSnowBallL = CMeshSphere::Create(pos, 20.0f, 0);
+
+		if (m_pSnowBallL != nullptr)
+		{
+			m_pSnowBallL->SetSizeDest(20.0f);
+		}
+	}
+}
+
+//==========================================================================
+// 雪玉の追従
+//==========================================================================
+void CPlayer::FollowSnowBall(void)
+{
+	if (m_pSnowBallR != nullptr && m_pMtxSnowBallR != nullptr)
+	{
+		D3DXVECTOR3 pos = GetPosition();
+		D3DXVECTOR3 move = GetMove();
+
+		D3DXMATRIX mtxHand;
+
+		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallR, D3DXVECTOR3(40.0f, 0.0f, 20.0f));
+
+		pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
+		pos += move;
+
+		m_pSnowBallR->SetPosition(pos);
+	}
+	if (m_pSnowBallL != nullptr && m_pMtxSnowBallL != nullptr)
+	{
+		D3DXVECTOR3 pos = GetPosition();
+		D3DXVECTOR3 move = GetMove();
+
+		D3DXMATRIX mtxHand;
+
+		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallL, D3DXVECTOR3(-40.0f, 0.0f, 20.0f));
+
+		pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
+		pos += move;
+
+		m_pSnowBallL->SetPosition(pos);
 	}
 }
 
@@ -658,7 +757,15 @@ void CPlayer::MotionSet(void)
 		int nType = m_pMotion->GetType();
 		int nOldType = m_pMotion->GetOldType();
 
-		if (m_sMotionFrag.bMove == true && m_sMotionFrag.bATK == false && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false && m_bJump == false)
+		if (nType == MOTION_ATK_L || nType == MOTION_ATK_R)
+		{// 拾うモーション
+			m_sMotionFrag.bATKL = false;		// 攻撃判定OFF
+			m_sMotionFrag.bATKR = false;		// 攻撃判定OFF
+
+			m_pMotion->Set(MOTION_PICKUP, true);
+		}
+		else if (m_sMotionFrag.bMove == true && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false && m_bJump == false &&
+			m_sMotionFrag.bATKL == false && m_sMotionFrag.bATKR == false)
 		{// 移動していたら
 
 			m_sMotionFrag.bMove = false;	// 移動判定OFF
@@ -666,39 +773,19 @@ void CPlayer::MotionSet(void)
 			// 移動モーション
 			m_pMotion->Set(MOTION_WALK);
 		}
-		else if (m_sMotionFrag.bJump == true && m_sMotionFrag.bATK == false && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false)
-		{// ジャンプ中
+		else if (m_sMotionFrag.bATKR == true)
+		{// 右攻撃
 
-			// ジャンプのフラグOFF
-			m_sMotionFrag.bJump = false;
+			m_sMotionFrag.bATKR = false;		// 攻撃判定OFF
 
-			// ジャンプモーション
-			m_pMotion->Set(MOTION_JUMP);
+			m_pMotion->Set(MOTION_ATK_R, true);
 		}
-		else if (m_bJump == true && m_sMotionFrag.bJump == false && m_sMotionFrag.bATK == false && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false)
-		{// ジャンプ中&&ジャンプモーションが終わってる時
+		else if (m_sMotionFrag.bATKL == true)
+		{// 左攻撃
 
-			// 落下モーション
-			m_pMotion->Set(MOTION_FALL);
-		}
-		else if (m_sMotionFrag.bKnockBack == true)
-		{// やられ中だったら
+			m_sMotionFrag.bATKL = false;		// 攻撃判定OFF
 
-			// やられモーション
-			m_pMotion->Set(MOTION_KNOCKBACK);
-		}
-		else if (m_sMotionFrag.bDead == true)
-		{// 死亡中だったら
-
-			// やられモーション
-			m_pMotion->Set(MOTION_DEAD);
-		}
-		else if (m_sMotionFrag.bATK == true)
-		{// 攻撃していたら
-
-			m_sMotionFrag.bATK = false;		// 攻撃判定OFF
-
-			m_pMotion->Set(MOTION_ATK, true);
+			m_pMotion->Set(MOTION_ATK_L, true);
 		}
 		else
 		{
@@ -743,19 +830,47 @@ void CPlayer::Atack(void)
 			continue;
 		}
 
+		int nType = m_pMotion->GetType();
+
+
 		if (m_pMotion->IsImpactFrame(*aInfo.AttackInfo[nCntAttack]))
-		{// 衝撃のカウントと同じとき
-
-			// 種類別
-			switch (m_pMotion->GetType())
+		{// 衝撃のカウントと同じとき]
+			switch (nType)
 			{
-			case MOTION_ATK:
-			case MOTION_ATK2:
+			case MOTION_ATK_L:
+			case MOTION_ATK_R:	// 雪玉を投げる
+			{
+				// トランスフォームの取得
+				D3DXVECTOR3 pos = m_pMotion->GetAttackPosition(GetModel(), *aInfo.AttackInfo[nCntAttack]);
+				D3DXVECTOR3 rot = GetRotation();
+				D3DXVECTOR3 move =
+				{
+					sinf(rot.y) * 15.0f,
+					0.0f,
+					cosf(rot.y) * 15.0f,
+				};
 
-				// スイング音再生
-				CManager::GetInstance()->GetSound()->PlaySound(CSound::LABEL_SE_SWING);
+				// 雪玉を投げる
+				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 10.0f);
+
+				if (nType == MOTION_ATK_L)
+				{// 左手の場合
+					m_pMtxSnowBallL = GetModel()[aInfo.AttackInfo[nCntAttack]->nCollisionNum]->GetPtrWorldMtx();
+				}
+				else
+				{// 右手の場合
+					m_pMtxSnowBallR = GetModel()[aInfo.AttackInfo[nCntAttack]->nCollisionNum]->GetPtrWorldMtx();
+				}
+			}
+				break;
+			case MOTION_PICKUP:	// 雪玉を拾う
+				CreateBall();
+
+				break;
+			default:
 				break;
 			}
+
 		}
 
 		// モーションカウンター取得
@@ -768,13 +883,13 @@ void CPlayer::Atack(void)
 
 			CEffect3D *pEffect = NULL;
 
-			switch (m_pMotion->GetType())
-			{
-			case MOTION_ATK:
-			case MOTION_ATK2:
-				
-				break;
-			}
+			//switch (m_pMotion->GetType())
+			//{
+			//case MOTION_ATK:
+			//case MOTION_ATK2:
+			//	
+			//	break;
+			//}
 
 #if _DEBUG
 			CEffect3D::Create(weponpos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), aInfo.AttackInfo[nCntAttack]->fRangeSize, 10, CEffect3D::MOVEEFFECT_NONE, CEffect3D::TYPE_NORMAL);
@@ -831,7 +946,6 @@ void CPlayer::Atack(void)
 //==========================================================================
 bool CPlayer::Collision(D3DXVECTOR3 &pos, D3DXVECTOR3 &move)
 {
-
 	// 向き取得
 	D3DXVECTOR3 rot = GetRotation();
 
@@ -1019,7 +1133,7 @@ bool CPlayer::Hit(const int nValue)
 			m_sMotionFrag.bKnockBack = true;
 
 			// やられモーション
-			m_pMotion->Set(MOTION_KNOCKBACK);
+			//m_pMotion->Set(MOTION_KNOCKBACK);
 
 			// ノックバックの位置更新
 			D3DXVECTOR3 pos = GetPosition();
@@ -1071,7 +1185,7 @@ bool CPlayer::Hit(const int nValue)
 		m_sMotionFrag.bKnockBack = true;
 
 		// やられモーション
-		m_pMotion->Set(MOTION_KNOCKBACK);
+		///m_pMotion->Set(MOTION_KNOCKBACK);
 
 		// 衝撃波生成
 		CImpactWave::Create
@@ -1320,7 +1434,7 @@ void CPlayer::Dead(void)
 		//m_pMotion->ToggleFinish(true);
 
 		// ぶっ倒れモーション
-		m_pMotion->Set(MOTION_DEAD);
+		//m_pMotion->Set(MOTION_DEAD);
 
 		// Xファイルとの判定
 		CStage *pStage = CGame::GetStage();

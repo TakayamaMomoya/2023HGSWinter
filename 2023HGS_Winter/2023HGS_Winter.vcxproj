@@ -248,6 +248,7 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="title_screen.cpp" />
     <ClCompile Include="tutorial.cpp" />
+    <ClCompile Include="universal.cpp" />
     <ClCompile Include="Xload.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -352,6 +353,7 @@
     <ClInclude Include="title.h" />
     <ClInclude Include="title_screen.h" />
     <ClInclude Include="tutorial.h" />
+    <ClInclude Include="universal.h" />
     <ClInclude Include="Xload.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

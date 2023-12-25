@@ -34,8 +34,8 @@ namespace
 //==========================================================================
 const char *CBullet::m_apTextureFile[TYPE_MAX] =	// テクスチャのファイル
 {
-	"data\\TEXTURE\\sunder_031.png",
-	"data\\TEXTURE\\sunder_031.png",
+	"",
+	"",
 };
 int CBullet::m_nNumAll = 0;		// 弾の総数
 
@@ -69,9 +69,6 @@ CBullet::CBullet(int nPriority) : CMeshSphere(nPriority)
 	m_nLife = 0;
 	m_nCntEmission = 0;				// 発生物のカウンター
 	m_fMaxParabolaHeight = 0.0f;	// 放物線の最大高さ
-	m_pMeshSphereEffect = NULL;		// メッシュスフィアのエフェクト
-	m_pEffectThunderRing = NULL;	// 雷のリングのエフェクト
-	memset(&m_pBulletAppearance[0], NULL, sizeof(m_pBulletAppearance));	// 見た目だけの弾
 	m_bAutoDeath = false;	// 自動削除のフラグ
 	m_bFinish = false;		// アニメーションが終わった判定
 
@@ -175,21 +172,6 @@ HRESULT CBullet::Init(void)
 	// テクスチャの割り当て
 	int nTex = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\effect\\effect000.jpg");
 
-	// 見た目だけの弾
-	for (int i= 0; i < mylib_const::BULLETAPPEARANCE_NUM; i++)
-	{
-		if (m_pBulletAppearance[i] != NULL)
-		{
-			continue;
-		}
-		m_pBulletAppearance[i] = CObjectBillboard::Create(GetPosition(), mylib_const::DEFAULT_VECTOR3);
-		m_pBulletAppearance[i]->SetSize(D3DXVECTOR2(GetWidthLen(), GetHeightLen()));
-		m_pBulletAppearance[i]->SetColor(D3DXCOLOR(0.3f, 0.3f, 1.0f, 1.0f));
-		m_pBulletAppearance[i]->BindTexture(nTex);
-		m_pBulletAppearance[i]->SetType(CObject::TYPE_NONE);
-	}
-
-
 	return S_OK;
 }
 
@@ -203,26 +185,6 @@ void CBullet::Uninit(void)
 	if (CManager::GetInstance()->GetMode() == CScene::MODE_GAME && CGame::GetBulletManager() != NULL)
 	{// 弾マネージャの削除
 		CGame::GetBulletManager()->Delete(this);
-	}
-
-	if (m_pMeshSphereEffect != NULL)
-	{// メッシュスフィアのエフェクト
-		m_pMeshSphereEffect = NULL;
-	}
-
-	if (m_pEffectThunderRing != NULL)
-	{// 雷のリングのエフェクト
-		m_pEffectThunderRing = NULL;
-	}
-
-	// 見た目だけの弾
-	for (int i = 0; i < mylib_const::BULLETAPPEARANCE_NUM; i++)
-	{
-		if (m_pBulletAppearance[i] != NULL)
-		{
-			m_pBulletAppearance[i]->Uninit();
-			m_pBulletAppearance[i] = NULL;
-		}
 	}
 
 	// 終了処理
@@ -255,107 +217,9 @@ void CBullet::Update(void)
 	{
 		m_nCntEmission = (m_nCntEmission + 1) % 100;	// 発生物のカウンター
 
-		if (m_nCntEmission == 10 && m_pMeshSphereEffect != NULL)
-		{
-			float fSize = GetWidthLen();
-			m_pMeshSphereEffect->SetSizeDest(fSize + 10.0f);
-		}
-		if (m_nCntEmission == 15 && m_pMeshSphereEffect != NULL)
-		{
-			m_pMeshSphereEffect->Uninit();
-			m_pMeshSphereEffect = NULL;
-		}
-
-		if (m_nCntEmission == 0)
-		{
-			if (m_pMeshSphereEffect != NULL)
-			{
-				m_pMeshSphereEffect->Uninit();
-				m_pMeshSphereEffect = NULL;
-			}
-
-			float fSize = GetWidthLen();
-
-			// メッシュスフィア生成
-			m_pMeshSphereEffect = CMeshSphere::Create(GetPosition(), fSize, m_nTexIdx, 7);
-
-			// 情報設定
-			m_pMeshSphereEffect->SetColor(D3DXCOLOR(0.2f, 0.2f, 1.0f, 0.7f));
-			m_pMeshSphereEffect->SetWidthLen(fSize);
-			m_pMeshSphereEffect->SetHeightLen(fSize);
-			m_pMeshSphereEffect->SetSizeDest(fSize + 100.0f);
-
-			if (m_pEffectThunderRing != NULL)
-			{// 雷のリングのエフェクト
-				m_pEffectThunderRing->Uninit();
-				m_pEffectThunderRing = NULL;
-			}
-
-			// 雷のリング生成
-			m_pEffectThunderRing = CThunderRing::Create(GetPosition(), D3DXVECTOR2(fSize + 260.0f, fSize + 260.0f));
-
-			// 自動で消えないようにする
-			m_pEffectThunderRing->SetDesableAutoDeath();
-		}
 	}
 	else if (m_type == TYPE_PLAYER)
 	{
-		// 半径
-		float fSize = GetWidthLen();
-
-		if (m_pMeshSphereEffect == NULL)
-		{
-			// メッシュスフィア生成
-			m_pMeshSphereEffect = CMeshSphere::Create(GetPosition(), fSize, m_nTexIdx, 7);
-
-			// 情報設定
-			m_pMeshSphereEffect->SetColor(D3DXCOLOR(1.0f, 0.2f, 1.0f, 0.7f));
-			m_pMeshSphereEffect->SetWidthLen(fSize);
-			m_pMeshSphereEffect->SetHeightLen(fSize);
-			m_pMeshSphereEffect->SetSizeDest(fSize + 100.0f);
-		}
-
-		if (m_pEffectThunderRing == NULL)
-		{
-			// 雷のリング生成
-			m_pEffectThunderRing = CThunderRing::Create(GetPosition(), D3DXVECTOR2(fSize + 360.0f, fSize + 360.0f));
-
-			// 色設定
-			m_pEffectThunderRing->SetColor(D3DXCOLOR(1.0f, 0.3f, 1.0f, 1.0f));
-
-			// 自動で消えないようにする
-			m_pEffectThunderRing->SetDesableAutoDeath();
-		}
-	}
-
-	if (m_pMeshSphereEffect != NULL)
-	{
-		m_pMeshSphereEffect->SetPosition(GetPosition());
-	}
-
-	if (m_pEffectThunderRing != NULL)
-	{// 雷のリングのエフェクト
-
-		if (m_pEffectThunderRing->IsFinish() == true)
-		{
-			m_pEffectThunderRing->Uninit();
-			m_pEffectThunderRing = NULL;
-		}
-		else
-		{
-			m_pEffectThunderRing->SetPosition(GetPosition());
-		}
-	}
-
-	// 見た目だけの弾の更新
-	for (int i = 0; i < mylib_const::BULLETAPPEARANCE_NUM; i++)
-	{
-		if (m_pBulletAppearance[i] == NULL)
-		{
-			continue;
-		}
-		m_pBulletAppearance[i]->Update();
-		m_pBulletAppearance[i]->SetPosition(GetPosition());
 	}
 
 	// 寿命減算
@@ -363,19 +227,6 @@ void CBullet::Update(void)
 
 	if (m_nLife <= 0)
 	{// 寿命が尽きたら
-
-		// 弾の削除
-		if (m_pMeshSphereEffect != NULL)
-		{
-			m_pMeshSphereEffect->Uninit();
-			m_pMeshSphereEffect = NULL;
-		}
-
-		if (m_pEffectThunderRing != NULL)
-		{// 雷のリングのエフェクト
-			m_pEffectThunderRing->Uninit();
-			m_pEffectThunderRing = NULL;
-		}
 
 		m_bFinish = true;
 
@@ -452,17 +303,6 @@ void CBullet::StateDamage(void)
 		m_nCntState = 0;
 		m_state = STATE_NONE;
 
-		if (m_pMeshSphereEffect != NULL)
-		{
-			m_pMeshSphereEffect->Uninit();
-			m_pMeshSphereEffect = NULL;
-		}
-
-		if (m_pEffectThunderRing != NULL)
-		{// 雷のリングのエフェクト
-			m_pEffectThunderRing->Uninit();
-			m_pEffectThunderRing = NULL;
-		}
 	}
 }
 
@@ -494,18 +334,6 @@ void CBullet::CollisionPlayer(void)
 
 			// ヒット処理
 			pPlayer->Hit(1);
-
-			if (m_pMeshSphereEffect != NULL)
-			{
-				m_pMeshSphereEffect->Uninit();
-				m_pMeshSphereEffect = NULL;
-			}
-
-			if (m_pEffectThunderRing != NULL)
-			{// 雷のリングのエフェクト
-				m_pEffectThunderRing->Uninit();
-				m_pEffectThunderRing = NULL;
-			}
 
 			m_bFinish = true;
 
@@ -562,18 +390,6 @@ void CBullet::CollisionEnemy(void)
 
 	if (bHit == true)
 	{// 当たってたら
-
-		if (m_pMeshSphereEffect != NULL)
-		{
-			m_pMeshSphereEffect->Uninit();
-			m_pMeshSphereEffect = NULL;
-		}
-
-		if (m_pEffectThunderRing != NULL)
-		{// 雷のリングのエフェクト
-			m_pEffectThunderRing->Uninit();
-			m_pEffectThunderRing = NULL;
-		}
 
 		m_bFinish = true;
 
@@ -633,9 +449,6 @@ void CBullet::Draw(void)
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-
-
-
 	// アルファテストを有効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
@@ -649,16 +462,6 @@ void CBullet::Draw(void)
 	// Zテストを無効にする
 	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);	//常に描画する
-
-	// 見た目だけの弾の描画
-	for (int i = 0; i < mylib_const::BULLETAPPEARANCE_NUM; i++)
-	{
-		if (m_pBulletAppearance[i] == NULL)
-		{
-			continue;
-		}
-		m_pBulletAppearance[i]->Draw();
-	}
 
 	// Zテストを有効にする
 	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
