@@ -85,7 +85,7 @@ CMeshSphere *CMeshSphere::Create(D3DXVECTOR3 pos, float fSize, const char *pFile
 //==========================================================================
 // 生成処理(オーバーロード)
 //==========================================================================
-CMeshSphere *CMeshSphere::Create(D3DXVECTOR3 pos, float fSize, int nTexIdx, int nPriority)
+CMeshSphere *CMeshSphere::Create(D3DXVECTOR3 pos, float fSize, int nTexIdx, int nPriority,int nBlock)
 {
 	// 生成用のオブジェクト
 	CMeshSphere *pObjMeshField = NULL;
@@ -107,8 +107,8 @@ CMeshSphere *CMeshSphere::Create(D3DXVECTOR3 pos, float fSize, int nTexIdx, int 
 
 			// 位置・向き
 			pObjMeshField->SetPosition(pos);
-			pObjMeshField->SetWidthBlock(16);
-			pObjMeshField->SetHeightBlock(16);
+			pObjMeshField->SetWidthBlock(nBlock);
+			pObjMeshField->SetHeightBlock(nBlock);
 			pObjMeshField->SetWidthLen(fSize);
 			pObjMeshField->SetHeightLen(fSize);
 
@@ -197,10 +197,6 @@ void CMeshSphere::Draw(void)
 	// ライティングを無効にする
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-
 	// アルファテストを有効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
@@ -208,11 +204,6 @@ void CMeshSphere::Draw(void)
 
 	// 描画処理
 	CObject3DMesh::Draw();
-
-	// αブレンディングを元に戻す
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	// ライティングを有効にする
 	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);

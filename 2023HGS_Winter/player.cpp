@@ -56,7 +56,8 @@ namespace
 	const int INTERVAL_ATK = 15;		// 攻撃の猶予
 	const int MAX_BUFFSTATUS = 100;		// ステータスのバフ最大値
 	const float MAX_BALL_SIZE = 40.0f;	// 雪玉の最大サイズ
-	const float SPEED_GRAW_BALL = 0.1f;	// 雪玉の成長速度
+	const float SPEED_GRAW_BALL = 1.1f;	// 雪玉の成長速度
+	const float LINE_ICE = 30.0f;	// 氷球になるライン
 }
 
 //==========================================================================
@@ -786,11 +787,23 @@ void CPlayer::FollowSnowBall(void)
 		// サイズの管理
 		float fSize = m_pSnowBallR->GetHeightLen();
 
-		fSize += SPEED_GRAW_BALL;
-
-		if (fSize >= MAX_BALL_SIZE)
-		{
+		if (fSize > MAX_BALL_SIZE)
+		{// 氷球にかわる
 			fSize = MAX_BALL_SIZE;
+
+			// 破棄
+			m_pSnowBallR->Uninit();
+
+			m_pSnowBallR = nullptr;
+
+			// 再生成
+			m_pSnowBallR = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), fSize, 0, 4, 5);
+
+			m_pSnowBallR->SetColor(D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f));
+		}
+		else
+		{
+			fSize += SPEED_GRAW_BALL;
 		}
 
 		m_pSnowBallR->SetSizeDest(fSize);
@@ -813,11 +826,23 @@ void CPlayer::FollowSnowBall(void)
 		// サイズの管理
 		float fSize = m_pSnowBallL->GetHeightLen();
 
-		fSize += SPEED_GRAW_BALL;
-
-		if (fSize >= MAX_BALL_SIZE)
-		{
+		if (fSize > MAX_BALL_SIZE)
+		{// 氷球にかわる
 			fSize = MAX_BALL_SIZE;
+
+			// 破棄
+			m_pSnowBallL->Uninit();
+
+			m_pSnowBallL = nullptr;
+
+			// 再生成
+			m_pSnowBallL = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), fSize, 0,4,5);
+
+			m_pSnowBallL->SetColor(D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f));
+		}
+		else
+		{
+			fSize += SPEED_GRAW_BALL;
 		}
 
 		m_pSnowBallL->SetSizeDest(fSize);
@@ -971,8 +996,27 @@ void CPlayer::Atack(void)
 					}
 				}
 
-				// 雪玉を投げる
-				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, fSize);
+				if (fSize >= MAX_BALL_SIZE)
+				{// 氷球の判定
+					// 雪玉を投げる
+					CBullet *pBullet = CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, fSize);
+
+					if (pBullet != nullptr)
+					{
+						pBullet->SetColor(D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f));
+					}
+				}
+				else
+				{
+					// 雪玉を投げる
+					CBullet *pBullet = CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, fSize);
+
+					if (pBullet != nullptr)
+					{
+						pBullet->SetColor(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+					}
+				}
+
 			}
 				break;
 			case MOTION_PICKUP:	// 雪玉を拾う
