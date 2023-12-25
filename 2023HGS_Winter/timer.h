@@ -65,10 +65,6 @@ private:
 	float m_fTime;					// 時間
 	D3DXVECTOR3 m_pos;				// 位置
 	D3DXVECTOR3 m_posOrigin;		// 元の位置
-	CObject2D *m_pTimerWindow;		// タイマーのウィンドウ
-	CMultiNumber *m_pMinutes;		// 分のオブジェクト
-	CMultiNumber *m_pSeconds;		// 秒のオブジェクト
-	CMultiNumber *m_pMilliSeconds;	// ミリ秒のオブジェクト
 	bool m_bAddTime;	// タイマー加算のフラグ
 };
 
