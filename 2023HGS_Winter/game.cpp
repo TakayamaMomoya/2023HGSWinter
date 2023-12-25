@@ -152,7 +152,7 @@ HRESULT CGame::Init(void)
 	m_pLimitArea->SetEnableDisp(false);
 
 	// タイマー
-	//m_pTimer = CTimer::Create(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
+	m_pTimer = CTimer::Create(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 
 	// サンタの袋生成
 	CSantaBag::Create(D3DXVECTOR3(200.0f, 0.0f, 200.0f));

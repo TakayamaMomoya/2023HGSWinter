@@ -35,6 +35,8 @@ public:
 	float GetRate(void) const;				// 割合取得
 	void SetRateDest(const float fRate);	// 目標の割合設定
 	float GetRateDest(void) const;			// 目標の割合取得
+	void SetSize(float fSize) { m_fSize = fSize; }	// サイズ設定
+	float GetSize(void) { return m_fSize; }
 
 	void BindTexture(int nIdx);	// テクスチャのインデックス番号割り当て
 	static CObjectCircleGauge2D *Create(int nPolygon, float fSize);

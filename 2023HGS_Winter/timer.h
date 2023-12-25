@@ -15,6 +15,15 @@
 //==========================================================================
 class CMultiNumber;
 class CObject2D;
+class CObjectCircleGauge2D;
+
+//==========================================================================
+// 定数定義
+//==========================================================================
+namespace
+{
+	const int NUM_CIRCLE = 10;	// 円の数
+}
 
 //==========================================================================
 // クラス定義
@@ -65,11 +74,9 @@ private:
 	float m_fTime;					// 時間
 	D3DXVECTOR3 m_pos;				// 位置
 	D3DXVECTOR3 m_posOrigin;		// 元の位置
-	CObject2D *m_pTimerWindow;		// タイマーのウィンドウ
-	CMultiNumber *m_pMinutes;		// 分のオブジェクト
-	CMultiNumber *m_pSeconds;		// 秒のオブジェクト
-	CMultiNumber *m_pMilliSeconds;	// ミリ秒のオブジェクト
 	bool m_bAddTime;	// タイマー加算のフラグ
+	int m_nProgress;	// 進行状況
+	CObjectCircleGauge2D *m_apCircle[NUM_CIRCLE];	// 数字がわりの円
 };
 
 
