@@ -920,7 +920,7 @@ void CPlayer::Atack(void)
 				};
 
 				// ê·ã ÇìäÇ∞ÇÈ
-				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 10.0f);
+				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 20.0f);
 
 				if (nType == MOTION_ATK_L)
 				{// ç∂éËÇÃèÍçá
