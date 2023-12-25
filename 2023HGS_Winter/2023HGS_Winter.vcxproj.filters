@@ -434,9 +434,6 @@
     <ClInclude Include="gamemanager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="glass.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="hp_gauge.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
