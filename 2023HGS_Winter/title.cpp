@@ -90,7 +90,7 @@ void CTitle::Update(void)
 
 	if (m_nCntSwitch <= 120)
 	{
-		return;
+		//return;
 	}
 
 	if (pInputKeyboard->GetTrigger(DIK_RETURN) || pInputGamepad->GetTrigger(CInputGamepad::BUTTON_A, 0) == true)
