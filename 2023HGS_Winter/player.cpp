@@ -178,6 +178,8 @@ HRESULT CPlayer::Init(void)
 	// ポーズのリセット
 	m_pMotion->ResetPose(MOTION_DEF);
 
+	m_pMotion->Set(MOTION_PICKUP);
+
 	return S_OK;
 }
 
@@ -657,6 +659,7 @@ void CPlayer::Controll(void)
 	{// 行動できるとき
 
 		if (m_sMotionFrag.bATKL == false && 
+			m_pSnowBallL != nullptr &&
 			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_LB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
 		{// 左攻撃
 			// 攻撃判定ON
@@ -664,6 +667,7 @@ void CPlayer::Controll(void)
 		}
 
 		if (m_sMotionFrag.bATKR == false &&
+			m_pSnowBallR != nullptr &&
 			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_RB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
 		{// 右攻撃
 		 // 攻撃判定ON
