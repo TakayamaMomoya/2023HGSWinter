@@ -123,6 +123,7 @@ void CEnemyBoss::Update(void)
 	{// 死亡フラグが立っていたら
 		return;
 	}
+	return;
 
 	// 更新処理
 	CEnemy::Update();
