@@ -95,6 +95,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>precompile.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>precompile.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -286,7 +287,6 @@
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamemanager.h" />
-    <ClInclude Include="glass.h" />
     <ClInclude Include="hp_gauge.h" />
     <ClInclude Include="hp_gauge_boss.h" />
     <ClInclude Include="hp_gauge_player.h" />

@@ -9,7 +9,6 @@
 #include "texture.h"
 #include "camera.h"
 #include "calculation.h"
-#include "glass.h"
 
 //==========================================
 //  ’è”’è‹`
