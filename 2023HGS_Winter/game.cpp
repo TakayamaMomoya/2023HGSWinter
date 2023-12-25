@@ -122,7 +122,7 @@ HRESULT CGame::Init(void)
 		CPlayer *pPlayer = CManager::GetInstance()->GetScene()->GetPlayer(nCntPlayer);
 		if (pPlayer != NULL)
 		{
-			pPlayer->SetPosition(D3DXVECTOR3(-500.0f + nCntPlayer * 50.0f, 5000.0f, 0.0f));
+			pPlayer->SetPosition(D3DXVECTOR3(0.0f, 10.0f, 0.0f));
 			pPlayer->SetRotation(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 		}
 	}
@@ -156,6 +156,9 @@ HRESULT CGame::Init(void)
 
 	// サンタの袋生成
 	CSantaBag::Create(D3DXVECTOR3(200.0f, 0.0f, 200.0f));
+
+	// クリアの判定
+	SetEnableClear(true);
 
 	// 成功
 	return S_OK;
@@ -265,32 +268,6 @@ void CGame::Update(void)
 	CManager::GetInstance()->GetDebugProc()->Print(
 		"現在のモード：【ゲーム】\n"
 		"切り替え：【 F 】\n\n");
-
-#ifdef _DEBUG
-	// クリア判定切り替え
-	if (CManager::GetInstance()->GetInputKeyboard()->GetTrigger(DIK_V))
-	{
-		m_clear = !m_clear;
-	}
-	CManager::GetInstance()->GetDebugProc()->Print
-	(
-		"今終わると : "
-	);
-	if (m_clear)
-	{
-		CManager::GetInstance()->GetDebugProc()->Print
-		(
-			"成功\n\n"
-		);
-	}
-	else
-	{
-		CManager::GetInstance()->GetDebugProc()->Print
-		(
-			"失敗\n\n"
-		);
-	}
-#endif
 
 	// キーボード情報取得
 	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();

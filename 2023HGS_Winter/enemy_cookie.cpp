@@ -15,7 +15,7 @@
 //==========================================================================
 namespace
 {
-	const float LENGTH_PUNCH = 300.0f;		// パンチの長さ
+	const float LENGTH_PUNCH = 110.0f;		// パンチの長さ
 	const float VELOCITY_WALK = 1.0f;		// 歩き
 	const float TIME_WAIT = 2.0f;			// 待機
 }

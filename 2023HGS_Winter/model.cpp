@@ -11,6 +11,7 @@
 #include "calculation.h"
 #include "texture.h"
 #include "Xload.h"
+#include "light.h"
 
 //==========================================================================
 // マクロ定義
@@ -275,6 +276,78 @@ void CModel::CalWorldMtx(void)
 }
 
 //==========================================================================
+// シャドウマトリックスの描画
+//==========================================================================
+void CModel::DrawShadowMtx(void)
+{
+	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();
+
+	// 減算合成の設定
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
+	D3DXMATRIX mtxShadow;
+	D3DXVECTOR4 posLight;	// ライトの位置
+	D3DXVECTOR3 pos, normal;	// 平面上の任意の点,法線ベクトル
+	D3DXPLANE plane;		// 平面情報
+	D3DLIGHT9 light;		// ライト情報
+	D3DXMATERIAL *pMat;				// マテリアルデータへのポインタ
+
+	
+	// Xファイルのデータ取得
+	CXLoad::SXFile *pXData = CScene::GetXLoad()->GetMyObject(m_nIdxXFile);
+
+	//ライトの位置を設定
+	pDevice->GetLight(0, &light);
+	posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
+
+	//シャドウマトリックスの初期化
+	D3DXMatrixIdentity(&mtxShadow);
+
+	// 平面情報を生成
+	pos = D3DXVECTOR3(0.0f, 3.0f, 0.0f);
+	normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	D3DXPlaneFromPointNormal(&plane, &pos, &normal);
+
+	// シャドウマトリックスの作成
+	D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
+	D3DXMatrixMultiply(&mtxShadow, &m_mtxWorld, &mtxShadow);
+
+	//シャドウマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
+
+	// マテリアルデータへのポインタを取得
+	pMat = (D3DXMATERIAL*)pXData->pBuffMat->GetBufferPointer();
+
+	D3DXMATERIAL matNow;	// 今回のマテリアル
+
+	// 他の情報クリア
+	ZeroMemory(&matNow, sizeof(D3DXMATERIAL));
+	matNow.MatD3D.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	matNow.MatD3D.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// 頂点数分繰り返し
+	for (int nCntMat = 0; nCntMat < (int)pXData->dwNumMat; nCntMat++)
+	{
+		//マテリアルの設定
+		pDevice->SetMaterial(&matNow.MatD3D);
+
+		//テクスチャの設定
+		pDevice->SetTexture(0, NULL);
+
+		// パーツの描画
+		pXData->pMesh->DrawSubset(nCntMat);
+	}
+
+	// 減算合成をもとに戻す
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+}
+
+//==========================================================================
 // 描画処理
 //==========================================================================
 void CModel::Draw(void)
@@ -312,6 +385,9 @@ void CModel::Draw(void)
 		// パーツの描画
 		pXData->pMesh->DrawSubset(nCntMat);
 	}
+
+	// シャドウマトリックス描画
+	DrawShadowMtx();
 
 	// 保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
@@ -358,6 +434,10 @@ void CModel::Draw(D3DXCOLOR col)
 		// パーツの描画
 		pXData->pMesh->DrawSubset(nCntMat);
 	}
+
+
+	// シャドウマトリックス描画
+	DrawShadowMtx();
 
 	// 保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
@@ -413,6 +493,10 @@ void CModel::Draw(float fAlpha)
 		// パーツの描画
 		pXData->pMesh->DrawSubset(nCntMat);
 	}
+
+
+	// シャドウマトリックス描画
+	DrawShadowMtx();
 
 	// 保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);

@@ -65,6 +65,7 @@ private:
 
 	void BindTexture(void);	// テクスチャ割り当て
 	void CalWorldMtx(void);	// ワールドマトリックスの計算処理
+	void DrawShadowMtx(void);
 
 	D3DXMATRIX	m_mtxWorld;	// ワールドマトリックス
 	D3DXVECTOR3 m_pos;		// 位置

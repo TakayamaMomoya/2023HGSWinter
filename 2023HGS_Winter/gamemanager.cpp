@@ -115,22 +115,6 @@ void CGameManager::Update(void)
 		m_bControll = true;
 		break;
 
-	case CGameManager::SCENE_MAINCLEAR:
-		m_bControll = true;
-		break;
-
-	case CGameManager::SCENE_EVOLUSION:
-		m_bControll = false;
-		break;
-
-	case CGameManager::SCENE_RUSH:
-		m_bControll = true;
-		break;
-
-	case CGameManager::SCENE_BOSS:
-		m_bControll = true;
-		break;
-
 	case CGameManager::SCENE_TRANSITIONWAIT:
 		m_bControll = false;
 		break;
@@ -178,52 +162,6 @@ void CGameManager::Update(void)
 		}
 	}
 
-}
-
-//==========================================================================
-// ボス設定
-//==========================================================================
-void CGameManager::SetBoss(void)
-{
-	// BGMストップ
-	CManager::GetInstance()->GetSound()->StopSound(CSound::LABEL_BGM_GAME);
-
-	// 種類設定
-	m_SceneType = SCENE_BOSS;
-
-	// リセット処理
-	CGame::Reset();
-
-	// シーンのリセット
-	CManager::GetInstance()->GetScene()->ResetScene();
-
-	// プレイヤー情報
-	for (int nCntPlayer = 0; nCntPlayer < mylib_const::MAX_PLAYER; nCntPlayer++)
-	{
-		CPlayer *pPlayer = CManager::GetInstance()->GetScene()->GetPlayer(nCntPlayer);
-		if (pPlayer == NULL)
-		{
-			continue;
-		}
-
-		// 位置設定
-		pPlayer->SetPosition(D3DXVECTOR3(-500.0f + nCntPlayer * 50.0f, 5000.0f, 0.0f));
-	}
-
-	// カメラの情報取得
-	CCamera *pCamera = CManager::GetInstance()->GetCamera();
-	pCamera->ResetBoss();
-
-	// 黒フレーム侵入
-	CManager::GetInstance()->GetBlackFrame()->SetState(CBlackFrame::STATE_IN);
-
-	// 敵の再配置
-	CEnemyManager *pEnemyManager = CGame::GetEnemyManager();
-	if (pEnemyManager != NULL)
-	{
-		// 敵の再配置
-		pEnemyManager->SetStageBoss();
-	}
 }
 
 //==========================================================================

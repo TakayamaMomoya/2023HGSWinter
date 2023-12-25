@@ -194,22 +194,10 @@ void CEnemyManager::Kill(void)
 //==========================================================================
 void CEnemyManager::Update(void)
 {
-	if (m_nNumAll <= 0 && m_bChangeStage == false)
+	if (m_nNumAll <= 0)
 	{// 全員倒されたら
 
-		// ステージ変更中にする
-		m_bChangeStage = true;
-
-		// 通常クリア状態にする
-		CGame::GetGameManager()->SetType(CGameManager::SCENE_MAINCLEAR);
-
-		// 遷移なしフェード追加
-		CManager::GetInstance()->GetInstantFade()->SetFade(D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f), 40);
-
-		// 遷移状態に変更
-		CGame::GetGameManager()->SetType(CGameManager::SCENE_TRANSITION);
-
-		CStageClearText::Create(D3DXVECTOR3(640.0f, 360.0f, 0.0f));
+		
 	}
 
 	
@@ -218,20 +206,6 @@ void CEnemyManager::Update(void)
 	CManager::GetInstance()->GetDebugProc()->Print(
 		"---------------- 敵情報 ----------------\n"
 		"【残り人数】[%d], 【パターン数】[%d]\n", m_nNumAll, m_nPatternNum);
-
-
-	for (int i = 0; i < m_nPatternNum; i++)
-	{
-		CManager::GetInstance()->GetDebugProc()->Print(
-			"\n【パターン】[%d] , 敵の数[%d]", i, m_aPattern[i].nNumEnemy);
-
-		int nNumSpawn = m_aPattern[i].nNumEnemy;	// スポーンする数
-		for (int nCntEnemy = 0; nCntEnemy < nNumSpawn; nCntEnemy++)
-		{
-			CManager::GetInstance()->GetDebugProc()->Print(
-				"種類[%d]", m_aPattern[i].EnemyData[nCntEnemy].nType);
-		}
-	}
 }
 
 //==========================================================================
