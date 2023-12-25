@@ -211,7 +211,7 @@ void CBullet::Update(void)
 	{// èdóÕ
 		D3DXVECTOR3 move = GetMove();
 
-		move.y -= 0.05f;
+		move.y -= 0.16f;
 
 		SetMove(move);
 	}

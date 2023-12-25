@@ -966,9 +966,9 @@ void CPlayer::Atack(void)
 				D3DXVECTOR3 rot = GetRotation();
 				D3DXVECTOR3 move =
 				{
-					sinf(rot.y) * 15.0f,
+					sinf(rot.y) * 30.0f,
 					0.0f,
-					cosf(rot.y) * 15.0f,
+					cosf(rot.y) * 30.0f,
 				};
 
 				float fSize = 20.0f;
