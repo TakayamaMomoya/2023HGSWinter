@@ -649,7 +649,15 @@ void CPlayer::MotionSet(void)
 		int nType = m_pMotion->GetType();
 		int nOldType = m_pMotion->GetOldType();
 
-		if (m_sMotionFrag.bMove == true && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false && m_bJump == false)
+		if (nType == MOTION_ATK_L || nType == MOTION_ATK_R)
+		{// 拾うモーション
+			m_sMotionFrag.bATKL = false;		// 攻撃判定OFF
+			m_sMotionFrag.bATKR = false;		// 攻撃判定OFF
+
+			m_pMotion->Set(MOTION_PICKUP, true);
+		}
+		else if (m_sMotionFrag.bMove == true && m_sMotionFrag.bKnockBack == false && m_sMotionFrag.bDead == false && m_bJump == false &&
+			m_sMotionFrag.bATKL == false && m_sMotionFrag.bATKR == false)
 		{// 移動していたら
 
 			m_sMotionFrag.bMove = false;	// 移動判定OFF
@@ -714,20 +722,37 @@ void CPlayer::Atack(void)
 			continue;
 		}
 
-		if (m_pMotion->IsImpactFrame(*aInfo.AttackInfo[nCntAttack]))
-		{// 衝撃のカウントと同じとき
-			// トランスフォームの取得
-			D3DXVECTOR3 pos = m_pMotion->GetAttackPosition(GetModel(), *aInfo.AttackInfo[nCntAttack]);
-			D3DXVECTOR3 rot = GetRotation();
-			D3DXVECTOR3 move = 
-			{
-				sinf(rot.y) * 15.0f,
-				0.0f,
-				cosf(rot.y) * 15.0f,
-			};
+		int nType = m_pMotion->GetType();
 
-			// 雪玉を投げる
-			CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 20.0f);
+
+		if (m_pMotion->IsImpactFrame(*aInfo.AttackInfo[nCntAttack]))
+		{// 衝撃のカウントと同じとき]
+			switch (nType)
+			{
+			case MOTION_ATK_L:
+			case MOTION_ATK_R:	// 雪玉を投げる
+			{
+				// トランスフォームの取得
+				D3DXVECTOR3 pos = m_pMotion->GetAttackPosition(GetModel(), *aInfo.AttackInfo[nCntAttack]);
+				D3DXVECTOR3 rot = GetRotation();
+				D3DXVECTOR3 move =
+				{
+					sinf(rot.y) * 15.0f,
+					0.0f,
+					cosf(rot.y) * 15.0f,
+				};
+
+				// 雪玉を投げる
+				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 10.0f);
+			}
+				break;
+			case MOTION_PICKUP:	// 雪玉を拾う
+
+				break;
+			default:
+				break;
+			}
+
 		}
 
 		// モーションカウンター取得

@@ -89,9 +89,6 @@ private:
 	int m_nTexIdx;				// テクスチャのインデックス番号
 	int m_nCntEmission;			// 発生物のカウンター
 	float m_fMaxParabolaHeight;	// 放物線の最大高さ
-	CMeshSphere *m_pMeshSphereEffect;	// メッシュスフィアのエフェクト
-	CObjectBillboard *m_pBulletAppearance[mylib_const::BULLETAPPEARANCE_NUM];	// 見た目だけの弾
-	CThunderRing *m_pEffectThunderRing;	// 雷のリングのエフェクト
 	bool m_bAutoDeath;		// 自動削除のフラグ
 	bool m_bFinish;			// 終わった判定
 	static int m_nNumAll;		// 弾の総数
