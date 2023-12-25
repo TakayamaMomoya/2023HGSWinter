@@ -9,14 +9,15 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------
 # キャラクター数
 #------------------------------------------------------------------
-NUM_CHARACTER = 3
+NUM_CHARACTER = 4
 
 #------------------------------------------------------------------
 # キャラクターファイル名
 #------------------------------------------------------------------
 MOTION_FILENAME = data/TEXT/character/enemy/motion_enemyboss.txt			# [0]ボス
-MOTION_FILENAME = data/TEXT/character/enemy/motion_enemy_cookie.txt			# [2]クッキー
-MOTION_FILENAME = data/TEXT/character/enemy/motion_enemy_reindeer.txt		# [3]トナカイ
+MOTION_FILENAME = data/TEXT/character/enemy/motion_enemy_cookie.txt			# [1]クッキー
+MOTION_FILENAME = data/TEXT/character/enemy/motion_enemy_reindeer.txt		# [2]トナカイ
+MOTION_FILENAME = data/TEXT/character/enemy/motion_enemy_orafu.txt			# [3]オラフ
 
 #===================================================================================================
 # 敵の情報
@@ -39,21 +40,211 @@ END_PATTERNSET
 # [1] クッキー単騎
 #------------------------------------------------------------------
 PATTERNSET
-	
 	ENEMYSET
 		TYPE = 1		# キャラの種類
 		INDEX = 0
 		POS = 0.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
-	
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [2] トナカイ単騎
+#------------------------------------------------------------------
+PATTERNSET
 	ENEMYSET
 		TYPE = 2		# キャラの種類
 		INDEX = 0
 		POS = 0.00 0.00 0.00
 		STARTFRAME = 0		# 初期フレーム
 	END_ENEMYSET
+END_PATTERNSET
 
+#------------------------------------------------------------------
+# [3] オラフ単騎
+#------------------------------------------------------------------
+PATTERNSET
+	ENEMYSET
+		TYPE = 3		# キャラの種類
+		INDEX = 0
+		POS = 0.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [4] クッキートナカイ横並び
+#------------------------------------------------------------------
+PATTERNSET
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = -50.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 2		# キャラの種類
+		INDEX = 0
+		POS = 50.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [5] クッキー×３
+#------------------------------------------------------------------
+PATTERNSET
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = -100.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = 0.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = 100.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [6] トナカイ×２
+#------------------------------------------------------------------
+PATTERNSET
+	ENEMYSET
+		TYPE = 2		# キャラの種類
+		INDEX = 0
+		POS = -50.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 2		# キャラの種類
+		INDEX = 0
+		POS = 50.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [7] クッキーの後ろからトナカイ特攻
+#------------------------------------------------------------------
+PATTERNSET
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = -100.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = 100.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 2		# キャラの種類
+		INDEX = 0
+		POS = 0.00 0.00 -300.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [8] クッキーの後ろから迫るオラフ
+#------------------------------------------------------------------
+PATTERNSET
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = -150.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = 150.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = 0.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 3		# キャラの種類
+		INDEX = 0
+		POS = 0.00 0.00 -200.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [9] クッキーオラフクッキー
+#------------------------------------------------------------------
+PATTERNSET
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = -100.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 3		# キャラの種類
+		INDEX = 0
+		POS = 0.00 0.00 50.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = 100.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+END_PATTERNSET
+
+#------------------------------------------------------------------
+# [10] 全員登場
+#------------------------------------------------------------------
+PATTERNSET
+	ENEMYSET
+		TYPE = 1		# キャラの種類
+		INDEX = 0
+		POS = 50.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 2		# キャラの種類
+		INDEX = 0
+		POS = 0.00 0.00 -400.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
+
+	ENEMYSET
+		TYPE = 3		# キャラの種類
+		INDEX = 0
+		POS = -50.00 0.00 0.00
+		STARTFRAME = 0		# 初期フレーム
+	END_ENEMYSET
 END_PATTERNSET
 
 END_SCRIPT		# この行は絶対消さないこと！
