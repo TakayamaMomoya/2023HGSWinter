@@ -44,7 +44,7 @@
 //==========================================================================
 namespace
 {
-	const char* CHARAFILE = "data\\TEXT\\character\\player\\motion_player.txt";	// キャラクターファイル
+	const char* CHARAFILE = "data\\TEXT\\character\\player\\motion_santa.txt";	// キャラクターファイル
 	const float JUMP = 20.0f * 1.5f;	// ジャンプ力初期値
 	const int INVINCIBLE_INT = 2;		// 無敵の間隔
 	const int INVINCIBLE_TIME = 90;		// 無敵の時間
