@@ -111,6 +111,7 @@ private:
 	void Aim(void);	// エイムの処理
 	void CreateBall(void);	// 雪玉の生成
 	void FollowSnowBall(void);	// 雪玉の追従
+	void LimitPos(void);	// 位置制限
 
 	void ChangeMotion(const char* pMotionFile);	// モーションファイル変更
 

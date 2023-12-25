@@ -59,6 +59,7 @@ namespace
 	const float MAX_BALL_SIZE = 40.0f;	// 雪玉の最大サイズ
 	const float SPEED_GRAW_BALL = 0.7f;	// 雪玉の成長速度
 	const float LINE_ICE = 30.0f;	// 氷球になるライン
+	const float RADIUS_STAGE = 1000.0f;	// ステージの半径
 }
 
 //==========================================================================
@@ -361,6 +362,9 @@ void CPlayer::Update(void)
 
 	// 雪玉の追従
 	FollowSnowBall();
+
+	// 位置の制限
+	LimitPos();
 
 #if 0
 	// デバッグ表示
@@ -1115,6 +1119,25 @@ void CPlayer::Atack(void)
 
 	CManager::GetInstance()->GetDebugProc()->Print(
 		"モーションカウンター：%d\n", m_pMotion->GetAllCount());
+}
+
+//==========================================================================
+// 位置制限
+//==========================================================================
+void CPlayer::LimitPos(void)
+{
+	D3DXVECTOR3 pos = GetPosition();
+
+	float fLength = sqrtf(pos.x * pos.x + pos.z * pos.z);
+
+	if (fLength > RADIUS_STAGE)
+	{// 補正
+		D3DXVec3Normalize(&pos, &pos);
+
+		pos *= RADIUS_STAGE;
+
+		SetPosition(pos);
+	}
 }
 
 //==========================================================================

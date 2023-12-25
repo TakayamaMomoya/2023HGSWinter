@@ -88,7 +88,8 @@ private:
 	int m_nNumChara;		// 敵の種類の総数
 	int m_nNumAll;			// 敵の総数
 	bool m_bChangeStage;	// ステージ変更中か
-
+	float m_fTimeSpawn;		// スポーンまでの時間
+	float m_fTimer;			// スポーンタイマー
 };
 
 
