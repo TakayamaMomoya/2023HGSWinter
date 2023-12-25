@@ -55,6 +55,8 @@ namespace
 	const int MAX_ATKCOMBO = 2;			// 攻撃コンボの最大数
 	const int INTERVAL_ATK = 15;		// 攻撃の猶予
 	const int MAX_BUFFSTATUS = 100;		// ステータスのバフ最大値
+	const float MAX_BALL_SIZE = 40.0f;	// 雪玉の最大サイズ
+	const float SPEED_GRAW_BALL = 0.1f;	// 雪玉の成長速度
 }
 
 //==========================================================================
@@ -781,12 +783,25 @@ void CPlayer::FollowSnowBall(void)
 {
 	if (m_pSnowBallR != nullptr && m_pMtxSnowBallR != nullptr)
 	{
+		// サイズの管理
+		float fSize = m_pSnowBallR->GetHeightLen();
+
+		fSize += SPEED_GRAW_BALL;
+
+		if (fSize >= MAX_BALL_SIZE)
+		{
+			fSize = MAX_BALL_SIZE;
+		}
+
+		m_pSnowBallR->SetSizeDest(fSize);
+
+		// 位置の追従
 		D3DXVECTOR3 pos = GetPosition();
 		D3DXVECTOR3 move = GetMove();
 
 		D3DXMATRIX mtxHand;
 
-		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallR, D3DXVECTOR3(40.0f, 0.0f, 20.0f));
+		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallR, D3DXVECTOR3(40.0f, 0.0f, fSize));
 
 		pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
 		pos += move;
@@ -795,12 +810,25 @@ void CPlayer::FollowSnowBall(void)
 	}
 	if (m_pSnowBallL != nullptr && m_pMtxSnowBallL != nullptr)
 	{
+		// サイズの管理
+		float fSize = m_pSnowBallL->GetHeightLen();
+
+		fSize += SPEED_GRAW_BALL;
+
+		if (fSize >= MAX_BALL_SIZE)
+		{
+			fSize = MAX_BALL_SIZE;
+		}
+
+		m_pSnowBallL->SetSizeDest(fSize);
+
+		// 位置の追従
 		D3DXVECTOR3 pos = GetPosition();
 		D3DXVECTOR3 move = GetMove();
 
 		D3DXMATRIX mtxHand;
 
-		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallL, D3DXVECTOR3(-40.0f, 0.0f, 20.0f));
+		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallL, D3DXVECTOR3(-40.0f, 0.0f, fSize));
 
 		pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
 		pos += move;
@@ -901,9 +929,8 @@ void CPlayer::Atack(void)
 
 		int nType = m_pMotion->GetType();
 
-
 		if (m_pMotion->IsImpactFrame(*aInfo.AttackInfo[nCntAttack]))
-		{// 衝撃のカウントと同じとき]
+		{// 衝撃のカウントと同じとき
 			switch (nType)
 			{
 			case MOTION_ATK_L:
@@ -919,14 +946,16 @@ void CPlayer::Atack(void)
 					cosf(rot.y) * 15.0f,
 				};
 
-				// 雪玉を投げる
-				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 20.0f);
+				float fSize = 20.0f;
 
 				if (nType == MOTION_ATK_L)
 				{// 左手の場合
 					if (m_pSnowBallL != nullptr)
 					{
+						fSize = m_pSnowBallL->GetHeightLen();
+
 						m_pSnowBallL->Uninit();
+
 						m_pSnowBallL = nullptr;
 					}
 				}
@@ -934,10 +963,16 @@ void CPlayer::Atack(void)
 				{// 右手の場合
 					if (m_pSnowBallR != nullptr)
 					{
+						fSize = m_pSnowBallR->GetHeightLen();
+
 						m_pSnowBallR->Uninit();
+
 						m_pSnowBallR = nullptr;
 					}
 				}
+
+				// 雪玉を投げる
+				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, fSize);
 			}
 				break;
 			case MOTION_PICKUP:	// 雪玉を拾う
