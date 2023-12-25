@@ -37,6 +37,7 @@
 #include "collisionobject.h"
 #include "limitereamanager.h"
 #include "beam.h"
+#include "santabag.h"
 
 
 //==========================================================================
@@ -377,6 +378,20 @@ void CPlayer::Controll(void)
 
 	// Œo‰ßŠÔæ“¾
 	float fCurrentTime = CManager::GetInstance()->GetDeltaTime();
+
+
+	std::list<CSantaBag*> BagList = CSantaBag::GetList();
+
+	// —v‘f•ªŒJ‚è•Ô‚µ
+	for (const auto& candidate : BagList)
+	{
+		// “–‚½‚è”»’è
+		if (CircleRange2D(pos, candidate->GetPosition(), GetRadius(), 80.0f))
+		{
+			candidate->Hit();
+		}
+	}
+	
 
 	if (CGame::GetGameManager()->IsControll())
 	{// s“®‚Å‚«‚é‚Æ‚«

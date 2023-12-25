@@ -22,6 +22,7 @@ public:
 
 	void Regist(T *pItem);			// 割り当て
 	void Delete(T *pItem);			// 削除
+	T* GetData(int nIdx);			// データ取得
 	void KillAll(void);				// 全て削除
 	int GetNumAll(void);			// アイテムの総数取得
 	std::list<T*> GetList(void);	// アイテムのリスト取得
@@ -86,6 +87,14 @@ template<class T> void CListManager<T>::Delete(T *pItem)
 
 	// 総数減算
 	m_nNumAll--;
+}
+
+//==========================================================================
+// データ取得
+//==========================================================================
+template<class T> T* CListManager<T>::GetData(int nIdx)
+{
+	return m_ListObj[nIdx];
 }
 
 //==========================================================================

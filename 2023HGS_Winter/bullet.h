@@ -97,7 +97,6 @@ private:
 	static int m_nNumAll;		// 弾の総数
 	static const char *m_apTextureFile[TYPE_MAX];	// テクスチャのファイル
 
-	//using STATE_FUNC = void(CBullet::*)();
 	typedef void(CBullet::*STATE_FUNC)(void);
 	typedef void(CBullet::*COLLISION_FUNC)(void);
 	static STATE_FUNC m_FuncList[];
