@@ -55,6 +55,8 @@ namespace
 	const int MAX_ATKCOMBO = 2;			// 攻撃コンボの最大数
 	const int INTERVAL_ATK = 15;		// 攻撃の猶予
 	const int MAX_BUFFSTATUS = 100;		// ステータスのバフ最大値
+	const float MAX_BALL_SIZE = 40.0f;	// 雪玉の最大サイズ
+	const float SPEED_GRAW_BALL = 0.1f;	// 雪玉の成長速度
 }
 
 //==========================================================================
@@ -650,10 +652,13 @@ void CPlayer::Controll(void)
 	SetMove(move);
 
 	// 向き設定
-	SetRotation(rot);
+	//SetRotation(rot);
 
 	// 目標の向き設定
-	SetRotDest(fRotDest);
+	//SetRotDest(fRotDest);
+
+	// エイムの処理
+	Aim();
 
 	if (CGame::GetGameManager()->IsControll() &&
 		m_state != STATE_DEAD &&
@@ -673,6 +678,72 @@ void CPlayer::Controll(void)
 		 // 攻撃判定ON
 			m_sMotionFrag.bATKR = true;
 		}
+	}
+}
+
+//==========================================================================
+// エイムの処理
+//==========================================================================
+void CPlayer::Aim(void)
+{
+	// キーボード情報取得
+	CInputKeyboard *pInputKeyboard = CManager::GetInstance()->GetInputKeyboard();
+
+	// ゲームパッド情報取得
+	CInputGamepad *pInputGamepad = CManager::GetInstance()->GetInputGamepad();
+
+	// スティックの角度取得
+	D3DXVECTOR3 vecStickR = pInputGamepad->GetStickMoveR(m_nMyPlayerIdx);
+	D3DXVECTOR3 vecStickL = pInputGamepad->GetStickMoveL(m_nMyPlayerIdx);
+
+	float fLength = D3DXVec3Length(&vecStickR);
+	float fLengthL = D3DXVec3Length(&vecStickL);
+
+	if (fLength >= 0.4f)
+	{// 右スティックで狙ってる判定
+		float fRotDest = atan2f(vecStickR.x, vecStickR.y) + D3DX_PI;
+
+		SetRotDest(fRotDest);
+
+		D3DXVECTOR3 rot = GetRotation();
+
+		// 現在と目標の差分を求める
+		float fRotDiff = fRotDest - rot.y;
+
+		// 角度の正規化
+		RotNormalize(fRotDiff);
+
+		// 角度の補正をする
+		rot.y += fRotDiff * 0.15f;
+
+		// 角度の正規化
+		RotNormalize(rot.y);
+
+		// 向き設定
+		SetRotation(rot);
+	}
+	else if (fLengthL >= 0.4f)
+	{
+		float fRotDest = atan2f(vecStickL.x, vecStickL.y) + D3DX_PI;
+
+		SetRotDest(fRotDest);
+
+		D3DXVECTOR3 rot = GetRotation();
+
+		// 現在と目標の差分を求める
+		float fRotDiff = fRotDest - rot.y;
+
+		// 角度の正規化
+		RotNormalize(fRotDiff);
+
+		// 角度の補正をする
+		rot.y += fRotDiff * 0.15f;
+
+		// 角度の正規化
+		RotNormalize(rot.y);
+
+		// 向き設定
+		SetRotation(rot);
 	}
 }
 
@@ -712,12 +783,25 @@ void CPlayer::FollowSnowBall(void)
 {
 	if (m_pSnowBallR != nullptr && m_pMtxSnowBallR != nullptr)
 	{
+		// サイズの管理
+		float fSize = m_pSnowBallR->GetHeightLen();
+
+		fSize += SPEED_GRAW_BALL;
+
+		if (fSize >= MAX_BALL_SIZE)
+		{
+			fSize = MAX_BALL_SIZE;
+		}
+
+		m_pSnowBallR->SetSizeDest(fSize);
+
+		// 位置の追従
 		D3DXVECTOR3 pos = GetPosition();
 		D3DXVECTOR3 move = GetMove();
 
 		D3DXMATRIX mtxHand;
 
-		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallR, D3DXVECTOR3(40.0f, 0.0f, 20.0f));
+		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallR, D3DXVECTOR3(40.0f, 0.0f, fSize));
 
 		pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
 		pos += move;
@@ -726,12 +810,25 @@ void CPlayer::FollowSnowBall(void)
 	}
 	if (m_pSnowBallL != nullptr && m_pMtxSnowBallL != nullptr)
 	{
+		// サイズの管理
+		float fSize = m_pSnowBallL->GetHeightLen();
+
+		fSize += SPEED_GRAW_BALL;
+
+		if (fSize >= MAX_BALL_SIZE)
+		{
+			fSize = MAX_BALL_SIZE;
+		}
+
+		m_pSnowBallL->SetSizeDest(fSize);
+
+		// 位置の追従
 		D3DXVECTOR3 pos = GetPosition();
 		D3DXVECTOR3 move = GetMove();
 
 		D3DXMATRIX mtxHand;
 
-		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallL, D3DXVECTOR3(-40.0f, 0.0f, 20.0f));
+		universal::SetOffSet(&mtxHand, *m_pMtxSnowBallL, D3DXVECTOR3(-40.0f, 0.0f, fSize));
 
 		pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
 		pos += move;
@@ -832,9 +929,8 @@ void CPlayer::Atack(void)
 
 		int nType = m_pMotion->GetType();
 
-
 		if (m_pMotion->IsImpactFrame(*aInfo.AttackInfo[nCntAttack]))
-		{// 衝撃のカウントと同じとき]
+		{// 衝撃のカウントと同じとき
 			switch (nType)
 			{
 			case MOTION_ATK_L:
@@ -850,17 +946,33 @@ void CPlayer::Atack(void)
 					cosf(rot.y) * 15.0f,
 				};
 
-				// 雪玉を投げる
-				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, 10.0f);
+				float fSize = 20.0f;
 
 				if (nType == MOTION_ATK_L)
 				{// 左手の場合
-					m_pMtxSnowBallL = GetModel()[aInfo.AttackInfo[nCntAttack]->nCollisionNum]->GetPtrWorldMtx();
+					if (m_pSnowBallL != nullptr)
+					{
+						fSize = m_pSnowBallL->GetHeightLen();
+
+						m_pSnowBallL->Uninit();
+
+						m_pSnowBallL = nullptr;
+					}
 				}
 				else
 				{// 右手の場合
-					m_pMtxSnowBallR = GetModel()[aInfo.AttackInfo[nCntAttack]->nCollisionNum]->GetPtrWorldMtx();
+					if (m_pSnowBallR != nullptr)
+					{
+						fSize = m_pSnowBallR->GetHeightLen();
+
+						m_pSnowBallR->Uninit();
+
+						m_pSnowBallR = nullptr;
+					}
 				}
+
+				// 雪玉を投げる
+				CBullet::Create(CBullet::TYPE::TYPE_PLAYER, CBullet::MOVETYPE::MOVETYPE_NORMAL, pos, rot, -move, fSize);
 			}
 				break;
 			case MOTION_PICKUP:	// 雪玉を拾う
