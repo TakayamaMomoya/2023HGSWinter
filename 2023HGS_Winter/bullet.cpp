@@ -207,6 +207,15 @@ void CBullet::Uninit(void)
 //==========================================================================
 void CBullet::Update(void)
 {
+	if (GetHeightLen() < 40.0f)
+	{// 重力
+		D3DXVECTOR3 move = GetMove();
+
+		move.y -= 0.16f;
+
+		SetMove(move);
+	}
+
 	// 位置更新
 	UpdatePos();
 
@@ -352,7 +361,6 @@ void CBullet::CollisionPlayer(void)
 			break;
 		}
 	}
-
 }
 
 //==========================================================================
@@ -392,6 +400,9 @@ void CBullet::CollisionEnemy(void)
 		if (SphereRange(pos, EnemyPosition, fRadius, fEnemyRadius))
 		{// 当たっていたら
 			bHit = true;
+
+			ppEnemy[nCntEnemy]->Hit(10.0f);
+
 			break;
 		}
 	}

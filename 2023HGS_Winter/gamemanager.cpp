@@ -172,7 +172,7 @@ void CGameManager::Update(void)
 			}
 			else
 			{// ボスステージ
-				SetBoss();
+				//SetBoss();
 			}
 
 		}

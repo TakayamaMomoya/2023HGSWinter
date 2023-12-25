@@ -19,9 +19,9 @@ namespace
 {
 	const float LENGTH_PUNCH = 300.0f;		// パンチの長さ
 	const float VELOCITY_WALK = 1.0f;		// 歩き
-	const float VELOCITY_DASH = 1.5f;		// 走る
+	const float VELOCITY_DASH = 7.0f;		// 走る
 	const float TIME_WAIT = 2.0f;			// 待機
-	const float TIME_DASH = 10.0f;			// 走るまでの時間
+	const float TIME_DASH = 30.0f;			// 走るまでの時間
 }
 
 //==========================================================================
@@ -103,7 +103,7 @@ void CEnemyReindeer::Update(void)
 	// 更新処理
 	CEnemy::Update();
 
-	m_fDashTime += CManager::GetInstance()->GetDeltaTime();
+	m_fDashTime += 0.1f;
 
 	if (TIME_DASH <= m_fDashTime)
 	{// 一定時間経過後に速度を上げる
