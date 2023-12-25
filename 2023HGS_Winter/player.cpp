@@ -57,7 +57,7 @@ namespace
 	const int INTERVAL_ATK = 15;		// 攻撃の猶予
 	const int MAX_BUFFSTATUS = 100;		// ステータスのバフ最大値
 	const float MAX_BALL_SIZE = 40.0f;	// 雪玉の最大サイズ
-	const float SPEED_GRAW_BALL = 0.7f;	// 雪玉の成長速度
+	const float SPEED_GRAW_BALL = 1.1f;	// 雪玉の成長速度
 	const float LINE_ICE = 30.0f;	// 氷球になるライン
 }
 
@@ -177,8 +177,6 @@ HRESULT CPlayer::Init(void)
 
 	// ポーズのリセット
 	m_pMotion->ResetPose(MOTION_DEF);
-
-	m_pMotion->Set(MOTION_PICKUP);
 
 	return S_OK;
 }
@@ -659,7 +657,6 @@ void CPlayer::Controll(void)
 	{// 行動できるとき
 
 		if (m_sMotionFrag.bATKL == false && 
-			m_pSnowBallL != nullptr &&
 			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_LB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
 		{// 左攻撃
 			// 攻撃判定ON
@@ -667,7 +664,6 @@ void CPlayer::Controll(void)
 		}
 
 		if (m_sMotionFrag.bATKR == false &&
-			m_pSnowBallR != nullptr &&
 			(pInputGamepad->GetTrigger(CInputGamepad::BUTTON_RB, m_nMyPlayerIdx) || pInputKeyboard->GetTrigger(DIK_RETURN)))
 		{// 右攻撃
 		 // 攻撃判定ON

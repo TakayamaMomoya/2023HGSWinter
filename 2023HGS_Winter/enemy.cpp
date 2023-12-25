@@ -666,7 +666,7 @@ bool CEnemy::Hit(const int nValue)
 		{// 体力がなくなったら
 
 			// ヒットストップ
-			CManager::GetInstance()->SetEnableHitStop(5);
+			CManager::GetInstance()->SetEnableHitStop(2);
 
 			// 振動
 			CManager::GetInstance()->GetCamera()->SetShake(5, 10.0f, 0.0f);
