@@ -58,6 +58,7 @@ void BeamCharge(void);
 void MortarCharge(void);
 void UnionWalk(void);
 void UltBeamCharge(void);
+void FallSnow(void);
 
 //==========================================================================
 // パーティクルの初期化処理
@@ -270,6 +271,11 @@ void my_particle::Create(D3DXVECTOR3 pos, TYPE nType)
 	case TYPE_ULT_BEAM_CHARGE:
 		UltBeamCharge();
 		break;
+
+	case TYPE_FALLSNOW:
+		FallSnow();
+		break;
+
 	}
 }
 
@@ -1930,5 +1936,53 @@ void UltBeamCharge(void)
 		// 目標の位置設定
 		pEffect->SetPositionDest(m_pos);
 		pEffect->SetRotation(D3DXVECTOR3(0.0f, 0.0f, GetRandomCircleValue()));
+	}
+}
+
+//==========================================================================
+// 雪降る
+//==========================================================================
+void FallSnow(void)
+{
+	D3DXVECTOR3 pos = mylib_const::DEFAULT_VECTOR3;
+
+	for (int nCntUse = 0; nCntUse < 2; nCntUse++)
+	{
+		float fBuff = (float)Random(80, 100) * 0.01f;
+		m_nLife = (int)(600.0f * fBuff);
+
+		float fRot = GetRandomCircleValue();
+
+		// 出現位置
+		float fDistance = (float)Random(-200, 200) * 10.0f;
+		pos = GetRandomSpherePosition(m_pos, fDistance);
+		pos.x = sinf(fRot) * fDistance;
+		pos.y = 1000.0f;
+		pos.z = cosf(fRot) * fDistance;
+
+		float fDiff = Random(-100, 100) * 0.001f;
+		m_col = D3DXCOLOR(
+			0.9f + fDiff,
+			0.9f + fDiff,
+			0.9f + fDiff,
+			0.4f);
+
+		// 半径設定
+		m_fRadius = 60.0f * fBuff;
+
+		// エフェクトの設定
+		CEffect3D *pEffect = CEffect3D::Create(
+			pos,
+			mylib_const::DEFAULT_VECTOR3,
+			m_col,
+			m_fRadius,
+			m_nLife,
+			CEffect3D::MOVEEFFECT_SUPERSUB,
+			CEffect3D::TYPE_NULL,
+			0.0f);
+
+		// 目標の位置設定
+		pEffect->SetRotation(D3DXVECTOR3(0.0f, 0.0f, GetRandomCircleValue()));
+		pEffect->SetGravityValue(0.01f);
 	}
 }

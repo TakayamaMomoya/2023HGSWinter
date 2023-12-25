@@ -82,6 +82,7 @@ private:
 	void EditReset(void);
 
 	// メンバ変数
+	int m_nIntervalSnow;
 	static CScore *m_pScore;						// スコアのオブジェクト
 	static CTimer *m_pTimer;						// タイマーのオブジェクト
 	static CBulletManager *m_pBulletManager;		// 弾マネージャのオブジェクト

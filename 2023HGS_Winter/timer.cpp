@@ -225,6 +225,13 @@ void CTimer::Update(void)
 			}
 		}
 	}
+
+	if (m_fTime <= 0.0f)
+	{
+		// ƒŠƒUƒ‹ƒg‚É‘JˆÚ
+		CManager::GetInstance()->GetFade()->SetFade(CScene::MODE_RESULT);
+	}
+
 }
 
 //==========================================================================
