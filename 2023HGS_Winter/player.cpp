@@ -40,6 +40,7 @@
 #include "santabag.h"
 #include "meshsphere.h"
 #include "universal.h"
+#include "particle.h"
 
 //==========================================================================
 // ’è”’è‹`
@@ -786,24 +787,37 @@ void CPlayer::FollowSnowBall(void)
 	{
 		// ƒTƒCƒY‚ÌŠÇ—
 		float fSize = m_pSnowBallR->GetHeightLen();
-
-		if (fSize > MAX_BALL_SIZE)
-		{// •X‹…‚É‚©‚í‚é
-			fSize = MAX_BALL_SIZE;
-
-			// ”jŠü
-			m_pSnowBallR->Uninit();
-
-			m_pSnowBallR = nullptr;
-
-			// Ä¶¬
-			m_pSnowBallR = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), fSize, 0, 4, 5);
-
-			m_pSnowBallR->SetColor(D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f));
-		}
-		else
+		
+		if(fSize < MAX_BALL_SIZE)
 		{
 			fSize += SPEED_GRAW_BALL;
+
+			if (fSize > MAX_BALL_SIZE)
+			{// •X‹…‚É‚©‚í‚é
+				fSize = MAX_BALL_SIZE;
+
+				// ”jŠü
+				m_pSnowBallR->Uninit();
+
+				m_pSnowBallR = nullptr;
+
+				// Ä¶¬
+				m_pSnowBallR = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), fSize, 0, 4, 5);
+
+				m_pSnowBallR->SetColor(D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f));
+
+				// ƒp[ƒeƒBƒNƒ‹‚Ì”­¶
+				// ˆÊ’u‚Ì’Ç]
+				D3DXVECTOR3 pos = GetPosition();
+
+				D3DXMATRIX mtxHand;
+
+				universal::SetOffSet(&mtxHand, *m_pMtxSnowBallR, D3DXVECTOR3(-40.0f, 0.0f, fSize));
+
+				pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
+
+				my_particle::Create(pos, my_particle::TYPE_BRASTATTACK);
+			}
 		}
 
 		m_pSnowBallR->SetSizeDest(fSize);
@@ -826,23 +840,36 @@ void CPlayer::FollowSnowBall(void)
 		// ƒTƒCƒY‚ÌŠÇ—
 		float fSize = m_pSnowBallL->GetHeightLen();
 
-		if (fSize > MAX_BALL_SIZE)
-		{// •X‹…‚É‚©‚í‚é
-			fSize = MAX_BALL_SIZE;
-
-			// ”jŠü
-			m_pSnowBallL->Uninit();
-
-			m_pSnowBallL = nullptr;
-
-			// Ä¶¬
-			m_pSnowBallL = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), fSize, 0,4,5);
-
-			m_pSnowBallL->SetColor(D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f));
-		}
-		else
+		if (fSize < MAX_BALL_SIZE)
 		{
 			fSize += SPEED_GRAW_BALL;
+
+			if (fSize > MAX_BALL_SIZE)
+			{// •X‹…‚É‚©‚í‚é
+				fSize = MAX_BALL_SIZE;
+
+				// ”jŠü
+				m_pSnowBallL->Uninit();
+
+				m_pSnowBallL = nullptr;
+
+				// Ä¶¬
+				m_pSnowBallL = CMeshSphere::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), fSize, 0, 4, 5);
+
+				m_pSnowBallL->SetColor(D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f));
+
+				// ƒp[ƒeƒBƒNƒ‹‚Ì”­¶
+				// ˆÊ’u‚Ì’Ç]
+				D3DXVECTOR3 pos = GetPosition();
+
+				D3DXMATRIX mtxHand;
+
+				universal::SetOffSet(&mtxHand, *m_pMtxSnowBallL, D3DXVECTOR3(-40.0f, 0.0f, fSize));
+
+				pos = { mtxHand._41,mtxHand._42 ,mtxHand._43 };
+
+				my_particle::Create(pos, my_particle::TYPE_BRASTATTACK);
+			}
 		}
 
 		m_pSnowBallL->SetSizeDest(fSize);

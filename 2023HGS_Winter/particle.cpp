@@ -1424,9 +1424,9 @@ void BrastAttack(void)
 		m_move.z = cosf(GetRandomCircleValue()) * fMove;
 
 		m_col = D3DXCOLOR(
-			0.9f + Random(-100, 100) * 0.001f,
+			0.2f + Random(-100, 100) * 0.001f,
 			0.2f + Random(-200, 200) * 0.001f,
-			0.2f + Random(-200, 200) * 0.001f,
+			0.9f + Random(-200, 200) * 0.001f,
 			1.0f);
 
 		// îºåaê›íË
